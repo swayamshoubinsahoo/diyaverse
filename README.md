@@ -1,4 +1,4 @@
-# 🪔 DiyaVerse — Digital Festive Greeting & AI Blessings
+# 🪔 DiyaVerse — Digital Festive Greeting & Blessings
 
 An immersive, interactive web platform engineered for the **Diwali Digital Diya** Hackathon organized jointly by **GDG on Campus JIS University** & **AWS Student Builder Group (SBG)**.
 
@@ -7,7 +7,7 @@ An immersive, interactive web platform engineered for the **Diwali Digital Diya*
 ## 🌟 Key Highlights & Features
 - **Interactive Canvas Diya**: Realistic flame kinetics, reactive glow ambient shader, and Web Audio synthesized chords.
 - **Interactive Sky Fireworks**: Click-to-burst particle physics reacting to viewport coordinates and taps.
-- **AI-Powered Generative Blessings**: Google Gemini AI祝福 synthesis principles across warm, spiritual, and energetic tones.
+- **AI-Powered Generative Blessings**: Google Gemini AI synthesis principles across warm, spiritual, and energetic tones.
 - **URL Parameter State Engine**: Encodes recipient and customized blessings into instant shareable links for WhatsApp and Web Share.
 - **Modern Responsive UI**: Built with Tailwind CSS and glassmorphism styling for mobile and desktop screens.
 
