@@ -1,98 +1,109 @@
-class SoundEngine {
-  constructor() { this.ctx = null; }
+// Vedic 432Hz Drone & Pentatonic Synthesizer Engine
+class VedicSoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.droneGain = null;
+    this.isDroneActive = false;
+  }
   init() {
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioCtx();
     }
   }
-  playDiyaChord() {
+  toggleVedicDrone() {
     this.init();
-    const freqs = [261.63, 329.63, 392.00, 523.25, 659.25]; // Festive Pentatonic Chimes
+    if (this.isDroneActive) {
+      this.droneGain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.8);
+      this.isDroneActive = false;
+      return false;
+    }
+    // 432 Hz Healing Harmonics (Sa-Pa Tanpura interval: 216Hz, 324Hz, 432Hz)
+    const fundamental = 216;
+    const droneOscs = [fundamental, fundamental * 1.5, fundamental * 2];
+    this.droneGain = this.ctx.createGain();
+    this.droneGain.gain.setValueAtTime(0.001, this.ctx.currentTime);
+    this.droneGain.gain.exponentialRampToValueAtTime(0.08, this.ctx.currentTime + 1.2);
+    this.droneGain.connect(this.ctx.destination);
+
+    droneOscs.forEach(freq => {
+      const osc = this.ctx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+      osc.connect(this.droneGain);
+      osc.start();
+    });
+    this.isDroneActive = true;
+    return true;
+  }
+  playDiyaChimes() {
+    this.init();
+    const freqs = [288, 360, 432, 576, 720]; // Classical Indian Pentatonic intervals based on 432Hz
     freqs.forEach((freq, idx) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.07);
-      gain.gain.setValueAtTime(0.12, this.ctx.currentTime + idx * 0.07);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 2.2);
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.08);
+      gain.gain.setValueAtTime(0.12, this.ctx.currentTime + idx * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 2.4);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
-      osc.start(this.ctx.currentTime + idx * 0.07);
-      osc.stop(this.ctx.currentTime + 2.4);
+      osc.start(this.ctx.currentTime + idx * 0.08);
+      osc.stop(this.ctx.currentTime + 2.5);
     });
   }
-  playBurstSound() {
+  playStarSpark() {
     this.init();
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(160, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(28, this.ctx.currentTime + 0.3);
-    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(864, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(432, this.ctx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.07, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
     osc.start();
-    osc.stop(this.ctx.currentTime + 0.35);
+    osc.stop(this.ctx.currentTime + 0.25);
   }
 }
 
-const audio = new SoundEngine();
+const audio = new VedicSoundEngine();
 let isDiyaLit = false;
-let sparklerMode = false;
-let diyaCount = 1048;
 
-// DOM Elements
+// Audio Controls
+const tanpuraBtn = document.getElementById("tanpuraBtn");
+tanpuraBtn.addEventListener("click", () => {
+  const active = audio.toggleVedicDrone();
+  tanpuraBtn.classList.toggle("border-amber-400", active);
+  tanpuraBtn.classList.toggle("bg-amber-500/30", active);
+});
+
+// Interactive Diya
 const diyaContainer = document.getElementById("diyaContainer");
 const diyaFlame = document.getElementById("diyaFlame");
-const diyaGlow = document.getElementById("diyaGlow");
-const lightPrompt = document.getElementById("lightDiyaPrompt");
-const globalCounter = document.getElementById("globalCounter");
-const sparklerModeBtn = document.getElementById("sparklerModeBtn");
-const sparklerModeText = document.getElementById("sparklerModeText");
-const audioToggle = document.getElementById("audioToggle");
+const diyaAura = document.getElementById("diyaAura");
+const diyaBadge = document.getElementById("diyaBadge");
 
-// Diya Lighting
 diyaContainer.addEventListener("click", () => {
   if (!isDiyaLit) {
     isDiyaLit = true;
     diyaFlame.classList.add("flame-active");
-    diyaGlow.classList.add("glow-active");
-    lightPrompt.innerText = "Diya Illuminated ✨";
-    lightPrompt.classList.replace("text-amber-300", "text-yellow-200");
-    audio.playDiyaChord();
+    diyaAura.classList.add("aura-active");
+    diyaBadge.innerText = "Akhand Jyoti Consecrated ✨";
+    diyaBadge.classList.replace("text-amber-300", "text-yellow-200");
+    audio.playDiyaChimes();
     launchConfetti();
-    diyaCount++;
-    globalCounter.textContent = diyaCount.toLocaleString();
   } else {
-    triggerBurstEffect();
-  }
-});
-
-// Audio chime trigger button
-audioToggle.addEventListener("click", () => {
-  audio.playDiyaChord();
-});
-
-// Sparkler Trail toggle
-sparklerModeBtn.addEventListener("click", () => {
-  sparklerMode = !sparklerMode;
-  if (sparklerMode) {
-    sparklerModeBtn.classList.replace("bg-amber-950/40", "bg-amber-500/30");
-    sparklerModeBtn.classList.replace("border-amber-500/40", "border-yellow-400");
-    sparklerModeText.textContent = "Sparkler Trail: ON ✨";
-  } else {
-    sparklerModeBtn.classList.replace("bg-amber-500/30", "bg-amber-950/40");
-    sparklerModeBtn.classList.replace("border-yellow-400", "border-amber-500/40");
-    sparklerModeText.textContent = "Sparkler Trail: OFF";
+    audio.playStarSpark();
+    launchConfetti();
   }
 });
 
 function launchConfetti() {
   if (typeof confetti === "function") {
     confetti({
-      particleCount: 85,
+      particleCount: 60,
       spread: 75,
       origin: { y: 0.65 },
       colors: ["#FFD700", "#FF8C00", "#FF4500", "#FFF"]
@@ -100,36 +111,25 @@ function launchConfetti() {
   }
 }
 
-function triggerBurstEffect() {
-  audio.playBurstSound();
-  if (typeof confetti === "function") {
-    confetti({
-      particleCount: 35,
-      spread: 60,
-      origin: { y: 0.65 },
-      colors: ["#FFD700", "#FFA500"]
-    });
-  }
-}
-
-// Background Sky Lanterns generator
+// Sky Lantern Spawner
 const lanternsContainer = document.getElementById("lanternsContainer");
 function spawnLantern() {
   const lantern = document.createElement("div");
   lantern.className = "lantern";
   lantern.style.left = `${Math.random() * 95}%`;
-  lantern.style.animationDuration = `${10 + Math.random() * 8}s`;
+  lantern.style.animationDuration = `${11 + Math.random() * 8}s`;
   lantern.style.opacity = `${0.6 + Math.random() * 0.4}`;
   lanternsContainer.appendChild(lantern);
   setTimeout(() => lantern.remove(), 18000);
 }
-setInterval(spawnLantern, 2200);
+setInterval(spawnLantern, 2500);
 for (let i = 0; i < 6; i++) spawnLantern();
 
-// Canvas Fireworks & Sparkler Particle Physics
-const canvas = document.getElementById("fireworksCanvas");
+// Cosmic Nakshatra Star-Canvas Physics
+const canvas = document.getElementById("cosmicCanvas");
 const ctx = canvas.getContext("2d");
-let particles = [];
+let stars = [];
+let constellations = [];
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -140,66 +140,119 @@ resizeCanvas();
 
 window.addEventListener("pointerdown", (e) => {
   if (e.target.closest("input, select, button, #diyaContainer")) return;
-  spawnFirework(e.clientX, e.clientY);
-  audio.playBurstSound();
+  addNakshatraStar(e.clientX, e.clientY);
+  audio.playStarSpark();
 });
 
-window.addEventListener("pointermove", (e) => {
-  if (sparklerMode) {
-    for (let i = 0; i < 3; i++) {
-      particles.push({
-        x: e.clientX,
-        y: e.clientY,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        alpha: 1,
-        color: Math.random() > 0.5 ? "#FFD700" : "#FF8C00",
-        size: Math.random() * 2 + 1
-      });
-    }
-  }
-});
-
-function spawnFirework(x, y) {
-  const colors = ["#f59e0b", "#fbbf24", "#fb923c", "#ef4444", "#38bdf8", "#34d399"];
-  for (let i = 0; i < 28; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = Math.random() * 4.5 + 1.2;
-    particles.push({
-      x, y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      alpha: 1,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      size: Math.random() * 2.4 + 1
-    });
+function addNakshatraStar(x, y) {
+  const star = { x, y, radius: Math.random() * 2.5 + 2, alpha: 1 };
+  stars.push(star);
+  if (stars.length > 1) {
+    const prev = stars[stars.length - 2];
+    const dist = Math.hypot(prev.x - x, prev.y - y);
+    if (dist < 260) constellations.push({ x1: prev.x, y1: prev.y, x2: x, y2: y, alpha: 1 });
   }
 }
 
-function renderParticles() {
+function renderCosmicScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach((p, index) => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.035; // gentle gravity
-    p.alpha -= 0.015;
-    if (p.alpha <= 0) {
-      particles.splice(index, 1);
-    } else {
-      ctx.save();
-      ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  });
-  requestAnimationFrame(renderParticles);
-}
-renderParticles();
 
-// URL Query Check
+  // Draw Constellation Lines
+  constellations.forEach((c, idx) => {
+    ctx.strokeStyle = `rgba(251, 191, 36, ${c.alpha * 0.45})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(c.x1, c.y1);
+    ctx.lineTo(c.x2, c.y2);
+    ctx.stroke();
+    c.alpha -= 0.003;
+    if (c.alpha <= 0) constellations.splice(idx, 1);
+  });
+
+  // Draw Stars
+  stars.forEach((s, idx) => {
+    ctx.save();
+    ctx.fillStyle = `rgba(254, 240, 138, ${s.alpha})`;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = "#f59e0b";
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    s.alpha -= 0.003;
+    if (s.alpha <= 0) stars.splice(idx, 1);
+  });
+
+  requestAnimationFrame(renderCosmicScene);
+}
+renderCosmicScene();
+
+// Generator Engine
+const generateBtn = document.getElementById("generateBtn");
+const outputCard = document.getElementById("outputCard");
+const shlokaSnippet = document.getElementById("shlokaSnippet");
+const generatedWish = document.getElementById("generatedWish");
+const copyShareLink = document.getElementById("copyShareLink");
+const whatsappShare = document.getElementById("whatsappShare");
+
+const archetypes = {
+  mahalakshmi: {
+    shloka: "॥ ॐ श्रीं ह्रीं क्लीं त्रिभुवन महालक्ष्म्यै अस्मांक दारिद्र्य नाशय ॐ नमः ॥",
+    blessings: [
+      "May Goddess Mahalakshmi enter your home with eightfold blessings of prosperity, wisdom, and eternal spiritual calm.",
+      "Lighting this consecrated Diya for boundless abundance and fruitful new beginnings in every venture you undertake."
+    ]
+  },
+  shanti: {
+    shloka: "॥ असतो मा सद्गमय । तमसो मा ज्योतिर्गमय । मृत्योर्मा अमृतं गमय ॥",
+    blessings: [
+      "From untruth lead us to truth, from darkness lead us to light. May this sacred flame bring enduring health and peace to your family.",
+      "May all disharmony dissolve in the warmth of this holy Deepavali, filling your days with quiet strength and contentment."
+    ]
+  },
+  vijaya: {
+    shloka: "॥ ॐ सर्वमंगल मांगल्ये शिवे सर्वार्थ साधिके । शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते ॥",
+    blessings: [
+      "May radiant victory and fearless energy accompany every endeavor this year. Spark high, conquer every horizon, and illuminate greatness!",
+      "A celebration of unyielding courage and joy. Wishing you supreme triumph in all your studies, projects, and ambitions."
+    ]
+  }
+};
+
+generateBtn.addEventListener("click", () => {
+  const recipient = document.getElementById("recipientInput").value.trim() || "Cherished Soul";
+  const sender = document.getElementById("senderInput").value.trim() || "A Well-wisher";
+  const tone = document.getElementById("toneSelect").value;
+
+  generateBtn.disabled = true;
+  generateBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Consecrating...`;
+
+  const item = archetypes[tone] || archetypes.mahalakshmi;
+  const wish = item.blessings[Math.floor(Math.random() * item.blessings.length)];
+
+  setTimeout(() => {
+    shlokaSnippet.innerText = item.shloka;
+    generatedWish.innerText = `"${wish}" — With reverence, ${sender}`;
+    outputCard.classList.remove("hidden");
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = `<i class="fa-solid fa-sparkles"></i> Consecrate & Generate Blessing`;
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?to=${encodeURIComponent(recipient)}&from=${encodeURIComponent(sender)}&wish=${encodeURIComponent(wish)}`;
+
+    copyShareLink.onclick = () => {
+      navigator.clipboard.writeText(shareUrl);
+      copyShareLink.innerHTML = `<i class="fa-solid fa-check text-green-400"></i> Copied!`;
+      setTimeout(() => (copyShareLink.innerHTML = `<i class="fa-solid fa-link"></i> Copy Sacred Link`), 2000);
+    };
+
+    whatsappShare.onclick = () => {
+      const text = encodeURIComponent(`🪔 *Shubh Deepavali ${recipient}!* ✨\n\nI consecrated an Akhand Diya for you on DiyaVerse:\n${shareUrl}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+    };
+  }, 400);
+});
+
+// Check URL Params
 function checkUrlGreeting() {
   const params = new URLSearchParams(window.location.search);
   const recipient = params.get("to");
@@ -210,61 +263,8 @@ function checkUrlGreeting() {
     document.getElementById("personalizedBanner").classList.remove("hidden");
     document.getElementById("recipientNameDisplay").innerText = recipient;
     document.getElementById("customWishDisplay").innerText = wish
-      ? `"${decodeURIComponent(wish)}" — With warmth, ${sender || "A Well-wisher"}`
-      : `Wishing you infinite joy, radiant health, and boundless prosperity this Deepavali! — ${sender || "A Well-wisher"}`;
+      ? `"${decodeURIComponent(wish)}" — Consecrated by ${sender || "A Well-wisher"}`
+      : `May eternal auspicious light illuminate your path with wisdom and prosperity! — ${sender || "A Well-wisher"}`;
   }
 }
 checkUrlGreeting();
-
-// Generator Logic
-const generateBtn = document.getElementById("generateBtn");
-const outputCard = document.getElementById("outputCard");
-const generatedWish = document.getElementById("generatedWish");
-const copyShareLink = document.getElementById("copyShareLink");
-const whatsappShare = document.getElementById("whatsappShare");
-
-generateBtn.addEventListener("click", () => {
-  const recipient = document.getElementById("recipientInput").value.trim() || "Friend";
-  const sender = document.getElementById("senderInput").value.trim() || "A Well-wisher";
-  const tone = document.getElementById("toneSelect").value;
-
-  generateBtn.disabled = true;
-  generateBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Generating...`;
-
-  const wishes = {
-    warm: [
-      `May the golden glow of this Diya bring immense laughter, harmony, and peace into your home. Shubh Deepavali, ${recipient}!`,
-      `Wishing you a festival of lights filled with warm moments, delicious feasts, and cherished memories with loved ones.`
-    ],
-    spiritual: [
-      `Asato ma sadgamaya, tamaso ma jyotirgamaya. May the holy light illuminate your life with divine wisdom. Happy Deepavali, ${recipient}!`,
-      `May Goddess Lakshmi and Lord Ganesha shower your household with unending prosperity, health, and spiritual calm.`
-    ],
-    energetic: [
-      `Light, spark, and conquer! Wishing you high energy, explosive success, and an electrifying year ahead! Happy Diwali, ${recipient}!`
-    ]
-  };
-
-  const selectedList = wishes[tone] || wishes.warm;
-  const selectedWish = selectedList[Math.floor(Math.random() * selectedList.length)];
-
-  setTimeout(() => {
-    generatedWish.textContent = `"${selectedWish}" — ${sender}`;
-    outputCard.classList.remove("hidden");
-    generateBtn.disabled = false;
-    generateBtn.innerHTML = `<i class="fa-solid fa-sparkles"></i> Generate Custom Blessing`;
-
-    const shareUrl = `${window.location.origin}${window.location.pathname}?to=${encodeURIComponent(recipient)}&from=${encodeURIComponent(sender)}&wish=${encodeURIComponent(selectedWish)}`;
-
-    copyShareLink.onclick = () => {
-      navigator.clipboard.writeText(shareUrl);
-      copyShareLink.innerHTML = `<i class="fa-solid fa-check text-green-400"></i> Copied!`;
-      setTimeout(() => (copyShareLink.innerHTML = `<i class="fa-solid fa-link"></i> Copy Link`), 2000);
-    };
-
-    whatsappShare.onclick = () => {
-      const text = encodeURIComponent(`🪔 *Happy Diwali ${recipient}!* ✨\n\nI lit a digital Diya for you and sent a festive blessing:\n${shareUrl}`);
-      window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
-    };
-  }, 400);
-});
