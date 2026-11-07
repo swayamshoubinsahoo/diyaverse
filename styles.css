@@ -4,22 +4,53 @@
     filter: drop-shadow(0 0 16px rgba(255, 160, 0, 0.9));
   }
   25% {
-    transform: scale(1.06) rotate(1deg);
-    filter: drop-shadow(0 0 22px rgba(255, 200, 0, 1));
+    transform: scale(1.08) rotate(1.5deg);
+    filter: drop-shadow(0 0 24px rgba(255, 200, 0, 1));
   }
   50% {
-    transform: scale(0.96) rotate(-2deg);
+    transform: scale(0.95) rotate(-2deg);
     filter: drop-shadow(0 0 14px rgba(255, 120, 0, 0.8));
   }
   75% {
-    transform: scale(1.04) rotate(1.5deg);
+    transform: scale(1.05) rotate(1deg);
     filter: drop-shadow(0 0 20px rgba(255, 180, 0, 0.95));
   }
 }
+
 .flame-active {
   opacity: 1 !important;
-  animation: flicker 1.8s infinite ease-in-out alternate;
+  animation: flicker 1.6s infinite ease-in-out alternate;
 }
+
 .glow-active {
-  background-color: rgba(245, 158, 11, 0.45) !important;
+  background-color: rgba(245, 158, 11, 0.5) !important;
+}
+
+/* Floating Sky Lanterns */
+@keyframes floatUp {
+  0% {
+    transform: translateY(110vh) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-15vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.lantern {
+  position: absolute;
+  width: 22px;
+  height: 32px;
+  border-radius: 6px 6px 12px 12px;
+  background: radial-gradient(circle at 50% 65%, #fff3b0 0%, #ff9800 60%, #e65100 100%);
+  box-shadow: 0 0 16px rgba(255, 152, 0, 0.85), inset 0 -4px 8px rgba(255, 255, 255, 0.7);
+  animation: floatUp 14s linear infinite;
+  pointer-events: none;
 }
