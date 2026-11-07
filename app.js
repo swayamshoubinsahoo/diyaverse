@@ -1,4 +1,4 @@
-// Sound Engine with Web Audio API (Chimes + Tanpura Drone Harmonics)
+// Boosted Festive Audio Engine (Web Audio API with Rich Harmonics & Gain)
 class SoundEngine {
   constructor() {
     this.ctx = null;
@@ -8,31 +8,37 @@ class SoundEngine {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioCtx();
     }
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
   }
   playDiyaChord() {
     this.init();
-    const freqs = [261.63, 329.63, 392.00, 523.25, 659.25];
+    const freqs = [261.63, 329.63, 392.00, 523.25, 659.25]; // Warm Festive Chimes
     freqs.forEach((freq, idx) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      osc.type = "sine";
+      osc.type = "triangle"; // richer, louder than pure sine
       osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.07);
-      gain.gain.setValueAtTime(0.12, this.ctx.currentTime + idx * 0.07);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 2.2);
+      
+      // Boosted audible volume
+      gain.gain.setValueAtTime(0.35, this.ctx.currentTime + idx * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 2.5);
+      
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start(this.ctx.currentTime + idx * 0.07);
-      osc.stop(this.ctx.currentTime + 2.4);
+      osc.stop(this.ctx.currentTime + 2.6);
     });
   }
   playBurstSound() {
     this.init();
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(160, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(28, this.ctx.currentTime + 0.3);
-    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -60,7 +66,7 @@ function switchTab(tabId) {
     activeBtn.classList.add("active-tab");
     activeBtn.classList.remove("text-amber-200/70");
   }
-  if (tabId === 'rangoli') resizeRangoli();
+  if (tabId === "rangoli") resizeRangoli();
 }
 
 // Sparkler Toggle
@@ -190,7 +196,7 @@ function renderParticles() {
 }
 renderParticles();
 
-// WALL OF LIGHT (Cards Array)
+// WALL OF LIGHT
 const initialWall = [
   { name: "Aaradhya & Family", msg: "May the divine blessings of Maa Lakshmi bring eternal peace and abundance to every home.", time: "Lit with devotion" },
   { name: "Rohan & Devika", msg: "Lighting this diya for harmony, clean air, and happiness across our beautiful nation.", time: "Lit with devotion" },
@@ -300,7 +306,7 @@ function drawPresetMandala(type) {
   rCtx.shadowBlur = 8;
   rCtx.shadowColor = "#f59e0b";
 
-  if (type === 'lotus') {
+  if (type === "lotus") {
     for (let i = 0; i < 8; i++) {
       rCtx.save();
       rCtx.translate(cx, cy);
@@ -351,10 +357,10 @@ function cycleAiMessage() {
 function setCardTheme(t) {
   const card = document.getElementById("greetingPreviewCard");
   document.querySelectorAll(".theme-opt").forEach(btn => btn.classList.remove("active-theme"));
-  if (t === 'traditional') card.style.background = "linear-gradient(to bottom, #1a0f2e, #0c051a)";
-  if (t === 'luxury') card.style.background = "linear-gradient(to bottom, #2b1704, #0d0601)";
-  if (t === 'minimal') card.style.background = "#0c0a09";
-  if (t === 'spiritual') card.style.background = "linear-gradient(to bottom, #14052b, #06020f)";
+  if (t === "traditional") card.style.background = "linear-gradient(to bottom, #1a0f2e, #0c051a)";
+  if (t === "luxury") card.style.background = "linear-gradient(to bottom, #2b1704, #0d0601)";
+  if (t === "minimal") card.style.background = "#0c0a09";
+  if (t === "spiritual") card.style.background = "linear-gradient(to bottom, #14052b, #06020f)";
 }
 
 function copyShareGreetingLink() {
@@ -396,10 +402,10 @@ if (photoCaption) {
 }
 function setPhotoFrame(type) {
   const frame = document.getElementById("photoFrameCard");
-  if (type === 'gold') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-amber-400/80 bg-[#120824] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
-  if (type === 'marigold') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-orange-500/80 bg-[#1a0a05] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
-  if (type === 'diya') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-yellow-300 bg-[#070312] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
-  if (type === 'velvet') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-rose-900 bg-[#1f030d] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+  if (type === "gold") frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-amber-400/80 bg-[#120824] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+  if (type === "marigold") frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-orange-500/80 bg-[#1a0a05] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+  if (type === "diya") frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-yellow-300 bg-[#070312] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+  if (type === "velvet") frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-rose-900 bg-[#1f030d] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
 }
 function downloadPhotoCard() {
   alert("Framed festive card generated! Take a screenshot or press Ctrl + P to save.");
@@ -455,15 +461,15 @@ function updateCountdown() {
   const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-  document.getElementById("timer-days").innerText = String(days).padStart(2, '0');
-  document.getElementById("timer-hours").innerText = String(hours).padStart(2, '0');
-  document.getElementById("timer-mins").innerText = String(mins).padStart(2, '0');
-  document.getElementById("timer-secs").innerText = String(secs).padStart(2, '0');
+  document.getElementById("timer-days").innerText = String(days).padStart(2, "0");
+  document.getElementById("timer-hours").innerText = String(hours).padStart(2, "0");
+  document.getElementById("timer-mins").innerText = String(mins).padStart(2, "0");
+  document.getElementById("timer-secs").innerText = String(secs).padStart(2, "0");
 }
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// PERSISTENT AMBIENT FESTIVE BGM (Raag Bhairav / Tanpura Harmonics)
+// AUDIBLE FESTIVE BGM (Rich Tanpura Drone + Sitar Plucks with Master Gain)
 let bgmCtx = null;
 let bgmMasterGain = null;
 let isBgmPlaying = false;
@@ -477,41 +483,51 @@ function initBgmAudio() {
     bgmMasterGain.gain.setValueAtTime(0.001, bgmCtx.currentTime);
     bgmMasterGain.connect(bgmCtx.destination);
   }
+  if (bgmCtx.state === "suspended") {
+    bgmCtx.resume();
+  }
 }
 
-function playTanpuraPluck(freq, delay, duration = 3.5) {
+function playRichNote(freq, delay, duration = 3.2) {
   if (!isBgmPlaying || !bgmCtx) return;
-  const osc = bgmCtx.createOscillator();
-  const pluckGain = bgmCtx.createGain();
-  
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(freq, bgmCtx.currentTime + delay);
 
-  pluckGain.gain.setValueAtTime(0.001, bgmCtx.currentTime + delay);
-  pluckGain.gain.exponentialRampToValueAtTime(0.06, bgmCtx.currentTime + delay + 0.1);
-  pluckGain.gain.exponentialRampToValueAtTime(0.0001, bgmCtx.currentTime + delay + duration);
+  // Dual oscillator: triangle body + slight sawtooth brightness for authentic sitar string ring
+  const osc1 = bgmCtx.createOscillator();
+  const osc2 = bgmCtx.createOscillator();
+  const noteGain = bgmCtx.createGain();
 
-  osc.connect(pluckGain);
-  pluckGain.connect(bgmMasterGain);
+  osc1.type = "triangle";
+  osc2.type = "sawtooth";
+  osc1.frequency.setValueAtTime(freq, bgmCtx.currentTime + delay);
+  osc2.frequency.setValueAtTime(freq * 2, bgmCtx.currentTime + delay); // 1st overtone
 
-  osc.start(bgmCtx.currentTime + delay);
-  osc.stop(bgmCtx.currentTime + delay + duration + 0.1);
+  // High, clear gain curve
+  noteGain.gain.setValueAtTime(0.001, bgmCtx.currentTime + delay);
+  noteGain.gain.exponentialRampToValueAtTime(0.35, bgmCtx.currentTime + delay + 0.08);
+  noteGain.gain.exponentialRampToValueAtTime(0.001, bgmCtx.currentTime + delay + duration);
+
+  osc1.connect(noteGain);
+  osc2.connect(noteGain);
+  noteGain.connect(bgmMasterGain);
+
+  osc1.start(bgmCtx.currentTime + delay);
+  osc2.start(bgmCtx.currentTime + delay);
+  osc1.stop(bgmCtx.currentTime + delay + duration + 0.1);
+  osc2.stop(bgmCtx.currentTime + delay + duration + 0.1);
 }
 
 function runBgmPattern() {
   if (!isBgmPlaying) return;
-  const notes = [216, 324, 288, 432];
-  notes.forEach((freq, i) => {
-    playTanpuraPluck(freq, i * 1.2, 4.0);
+  // Meditative Indian Pentatonic Raag: Sa (216Hz), Re (243Hz), Ga (270Hz), Pa (324Hz), Dha (364Hz), Sa' (432Hz)
+  const pattern = [216, 270, 324, 432, 324, 270];
+  pattern.forEach((freq, idx) => {
+    playRichNote(freq, idx * 0.75, 2.5);
   });
-  bgmLoopTimer = setTimeout(runBgmPattern, 5200);
+  bgmLoopTimer = setTimeout(runBgmPattern, 4800);
 }
 
 function toggleFestiveBgm() {
   initBgmAudio();
-  if (bgmCtx.state === 'suspended') {
-    bgmCtx.resume();
-  }
 
   const icon = document.getElementById("bgmIcon");
   const status = document.getElementById("bgmStatusText");
@@ -519,15 +535,15 @@ function toggleFestiveBgm() {
 
   if (!isBgmPlaying) {
     isBgmPlaying = true;
-    bgmMasterGain.gain.exponentialRampToValueAtTime(0.12, bgmCtx.currentTime + 1);
+    bgmMasterGain.gain.exponentialRampToValueAtTime(0.45, bgmCtx.currentTime + 0.5); // Louder, clearly audible
     runBgmPattern();
     if (icon) icon.className = "fa-solid fa-pause";
-    if (status) status.textContent = "Playing Sacred Meditative Raga";
+    if (status) status.textContent = "Playing Meditative Sitar Raga (432Hz)";
     if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping";
   } else {
     isBgmPlaying = false;
     clearTimeout(bgmLoopTimer);
-    bgmMasterGain.gain.exponentialRampToValueAtTime(0.0001, bgmCtx.currentTime + 0.5);
+    bgmMasterGain.gain.exponentialRampToValueAtTime(0.0001, bgmCtx.currentTime + 0.3);
     if (icon) icon.className = "fa-solid fa-play";
     if (status) status.textContent = "Paused • Tap to Resume";
     if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-amber-500";
