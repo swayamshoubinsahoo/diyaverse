@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DiyaVerse — Digital Festive Greeting & AI Blessings</title>
+  <title>DiyaVerse — Digital Festive Greeting</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -17,11 +17,6 @@
       <span class="text-2xl">🪔</span>
       <span class="font-bold text-xl tracking-wider text-amber-400">DiyaVerse</span>
     </div>
-    <div class="flex items-center gap-2">
-      <span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3 py-1 rounded-full">
-        GDG × AWS SBG Edition
-      </span>
-    </div>
   </header>
 
   <main class="relative z-10 max-w-4xl mx-auto px-4 py-6 flex flex-col items-center text-center">
@@ -31,12 +26,14 @@
       <p id="customWishDisplay" class="text-amber-100 text-sm mt-1 italic"></p>
     </div>
 
-    <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 drop-shadow-md">
-      Spark Lights of Joy & Hope
-    </h1>
-    <p class="text-amber-200/80 mt-2 max-w-xl text-sm md:text-base">
-      Click the Diya to ignite the flame. Tap anywhere in the night sky to launch fireworks!
-    </p>
+    <div class="w-full max-w-2xl px-4 mx-auto">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 drop-shadow-md leading-tight">
+        Spark Lights of Joy & Hope
+      </h1>
+      <p class="text-amber-200/80 mt-2 text-xs sm:text-sm md:text-base max-w-xl mx-auto">
+        Click the Diya to ignite the flame. Tap anywhere in the night sky to launch fireworks!
+      </p>
+    </div>
 
     <div class="my-8 relative flex flex-col items-center cursor-pointer group" id="diyaContainer">
       <div id="diyaGlow" class="absolute -top-16 w-40 h-40 rounded-full bg-amber-500/0 blur-2xl transition-all duration-700 pointer-events-none"></div>
@@ -67,9 +64,8 @@
     <div class="w-full max-w-xl bg-amber-950/20 backdrop-blur-lg border border-amber-500/20 rounded-3xl p-6 shadow-2xl">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
-          <i class="fa-solid fa-wand-magic-sparkles text-yellow-400"></i> AI Festive Wish Creator
+          <i class="fa-solid fa-wand-magic-sparkles text-yellow-400"></i> Festive Wish Creator
         </h3>
-        <span class="text-[11px] bg-yellow-400/10 text-yellow-300 px-2 py-0.5 rounded-full border border-yellow-400/30">Google Gemini Powered</span>
       </div>
 
       <div class="space-y-3 text-left text-xs">
@@ -118,7 +114,7 @@
   </main>
 
   <footer class="text-center py-4 text-xs text-amber-400/40 relative z-10">
-    Engineered for GDG on Campus JIS & AWS Student Builder Group • Hosted on AWS
+    Engineered for Diwali Celebration
   </footer>
 
   <script src="app.js"></script>
