@@ -19,7 +19,7 @@
 
 .flame-active {
   opacity: 1 !important;
-  animation: flicker 1.5s infinite ease-in-out alternate;
+  animation: flicker 1.6s infinite ease-in-out alternate;
 }
 
 .glow-active {
@@ -32,12 +32,8 @@
     transform: translateY(110vh) scale(0.6);
     opacity: 0;
   }
-  15% {
-    opacity: 0.85;
-  }
-  85% {
-    opacity: 0.85;
-  }
+  15% { opacity: 0.85; }
+  85% { opacity: 0.85; }
   100% {
     transform: translateY(-15vh) scale(1.1);
     opacity: 0;
@@ -60,4 +56,17 @@
   color: #1c1917 !important;
   font-weight: 700 !important;
   box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+}
+
+.active-theme {
+  border-color: #facc15 !important;
+  background-color: rgba(245, 158, 11, 0.25) !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

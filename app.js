@@ -1,6 +1,8 @@
-// Sound Engine with Web Audio API
+// Sound Engine with Web Audio API (Chimes + Tanpura Drone Harmonics)
 class SoundEngine {
-  constructor() { this.ctx = null; }
+  constructor() {
+    this.ctx = null;
+  }
   init() {
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -43,32 +45,27 @@ const audio = new SoundEngine();
 let isDiyaLit = false;
 let sparklerMode = false;
 
-// Tab Routing
+// Tab Routing Function
 function switchTab(tabId) {
   document.querySelectorAll(".view-panel").forEach(el => el.classList.add("hidden"));
   const target = document.getElementById(`view-${tabId}`);
   if (target) target.classList.remove("hidden");
 
-  document.querySelectorAll(".nav-tab").forEach(btn => {
+  document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.classList.remove("active-tab");
-    btn.classList.add("text-amber-300/70");
+    btn.classList.add("text-amber-200/70");
   });
   const activeBtn = document.getElementById(`tab-${tabId}`);
   if (activeBtn) {
     activeBtn.classList.add("active-tab");
-    activeBtn.classList.remove("text-amber-300/70");
+    activeBtn.classList.remove("text-amber-200/70");
   }
   if (tabId === 'rangoli') resizeRangoli();
 }
 
-// Audio Button
-document.getElementById("audioToggle").addEventListener("click", () => {
-  audio.playDiyaChord();
-});
-
 // Sparkler Toggle
-const sparklerBtn = document.getElementById("sparklerModeBtn");
-const sparklerText = document.getElementById("sparklerModeText");
+const sparklerBtn = document.getElementById("sparklerBtn");
+const sparklerText = document.getElementById("sparklerText");
 sparklerBtn.addEventListener("click", () => {
   sparklerMode = !sparklerMode;
   sparklerText.textContent = sparklerMode ? "Sparklers: ON ✨" : "Sparklers: OFF";
@@ -98,8 +95,8 @@ function kindleMainDiya() {
 function launchConfetti() {
   if (typeof confetti === "function") {
     confetti({
-      particleCount: 70,
-      spread: 70,
+      particleCount: 75,
+      spread: 75,
       origin: { y: 0.65 },
       colors: ["#FFD700", "#FF8C00", "#FF4500", "#FFF"]
     });
@@ -133,7 +130,7 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 window.addEventListener("pointerdown", (e) => {
-  if (e.target.closest("input, select, button, #diyaContainer, canvas#rangoliCanvas")) return;
+  if (e.target.closest("input, select, button, textarea, #diyaContainer, canvas#rangoliCanvas")) return;
   spawnFirework(e.clientX, e.clientY);
   audio.playBurstSound();
 });
@@ -200,11 +197,12 @@ const initialWall = [
   { name: "Dr. K. S. Mukherjee", msg: "Wishing health, recovery, and boundless positivity to everyone walking through tough times.", time: "Lit with devotion" },
   { name: "Sneha & Kids", msg: "Happy Diwali to our grandparents and friends everywhere! Lots of love and sweets!", time: "Lit with devotion" },
   { name: "Karan Verma", msg: "From darkness unto light — Tamaso Ma Jyotirgamaya.", time: "Lit with devotion" },
-  { name: "Meera Patil", msg: "Sending golden warmth, good fortune, and lots of smiles this festive season!", time: "Lit with devotion" }
+  { name: "Meera Patel", msg: "Sending golden warmth, good fortune, and lots of smiles this festive season!", time: "Lit with devotion" }
 ];
 
 function renderWall() {
   const grid = document.getElementById("wallGrid");
+  if (!grid) return;
   grid.innerHTML = "";
   initialWall.forEach(item => {
     const card = document.createElement("div");
@@ -274,7 +272,6 @@ function drawRangoli(e) {
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
   
-  // Radial Symmetrical Drawing
   const cx = rCanvas.width / 2;
   const cy = rCanvas.height / 2;
   const dx = x - cx;
@@ -284,9 +281,8 @@ function drawRangoli(e) {
   rCtx.shadowBlur = 10;
   rCtx.shadowColor = rColor;
 
-  // 6-axis symmetry
-  for (let i = 0; i < 6; i++) {
-    const angle = (Math.PI / 3) * i;
+  for (let i = 0; i < 8; i++) {
+    const angle = (Math.PI / 4) * i;
     const rx = cx + Math.cos(angle) * dx - Math.sin(angle) * dy;
     const ry = cy + Math.sin(angle) * dx + Math.cos(angle) * dy;
     rCtx.beginPath();
@@ -295,88 +291,158 @@ function drawRangoli(e) {
   }
 }
 
-// FESTIVE SWEETS POLL
-let kaju = 842;
-let soan = 619;
-function voteSweet(type) {
-  if (type === 'kaju') kaju++;
-  if (type === 'soan') soan++;
-  document.getElementById("kajuVotes").textContent = `${kaju} votes`;
-  document.getElementById("soanVotes").textContent = `${soan} votes`;
-  document.getElementById("voteBanner").classList.remove("hidden");
+function drawPresetMandala(type) {
+  clearRangoli();
+  const cx = rCanvas.width / 2;
+  const cy = rCanvas.height / 2;
+  rCtx.strokeStyle = "#fbbf24";
+  rCtx.lineWidth = 2;
+  rCtx.shadowBlur = 8;
+  rCtx.shadowColor = "#f59e0b";
+
+  if (type === 'lotus') {
+    for (let i = 0; i < 8; i++) {
+      rCtx.save();
+      rCtx.translate(cx, cy);
+      rCtx.rotate((Math.PI / 4) * i);
+      rCtx.beginPath();
+      rCtx.moveTo(0, 0);
+      rCtx.quadraticCurveTo(45, -60, 0, -100);
+      rCtx.quadraticCurveTo(-45, -60, 0, 0);
+      rCtx.stroke();
+      rCtx.restore();
+    }
+  } else {
+    for (let i = 0; i < 6; i++) {
+      rCtx.save();
+      rCtx.translate(cx, cy);
+      rCtx.rotate((Math.PI / 3) * i);
+      rCtx.strokeRect(-35, -35, 70, 70);
+      rCtx.restore();
+    }
+  }
   audio.playDiyaChord();
 }
 
-// GREETINGS & URL ENGINE
-const generateBtn = document.getElementById("generateBtn");
-const outputCard = document.getElementById("outputCard");
-const generatedWish = document.getElementById("generatedWish");
-const copyShareLink = document.getElementById("copyShareLink");
-const whatsappShare = document.getElementById("whatsappShare");
+// GREETINGS LIVE PREVIEW
+const recipientInput = document.getElementById("recipientInput");
+const senderInput = document.getElementById("senderInput");
+const messageInput = document.getElementById("messageInput");
 
-generateBtn.addEventListener("click", () => {
-  const recipient = document.getElementById("recipientInput").value.trim() || "Friend";
-  const sender = document.getElementById("senderInput").value.trim() || "A Well-wisher";
-  const tone = document.getElementById("toneSelect").value;
-
-  generateBtn.disabled = true;
-  generateBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Generating...`;
-
-  const wishes = {
-    warm: [
-      `May the golden glow of this Diya bring immense laughter, harmony, and peace into your home. Shubh Deepavali, ${recipient}!`,
-      `Wishing you a festival of lights filled with warm moments, delicious feasts, and cherished memories with loved ones.`
-    ],
-    spiritual: [
-      `Asato ma sadgamaya, tamaso ma jyotirgamaya. May the holy light illuminate your life with divine wisdom. Happy Deepavali, ${recipient}!`,
-      `May Goddess Lakshmi and Lord Ganesha shower your household with unending prosperity, health, and spiritual calm.`
-    ],
-    energetic: [
-      `Light, spark, and conquer! Wishing you high energy, explosive success, and an electrifying year ahead! Happy Diwali, ${recipient}!`
-    ]
-  };
-
-  const selectedList = wishes[tone] || wishes.warm;
-  const selectedWish = selectedList[Math.floor(Math.random() * selectedList.length)];
-
-  setTimeout(() => {
-    generatedWish.textContent = `"${selectedWish}" — ${sender}`;
-    outputCard.classList.remove("hidden");
-    generateBtn.disabled = false;
-    generateBtn.innerHTML = `<i class="fa-solid fa-sparkles"></i> Generate Custom Blessing`;
-
-    const shareUrl = `${window.location.origin}${window.location.pathname}?to=${encodeURIComponent(recipient)}&from=${encodeURIComponent(sender)}&wish=${encodeURIComponent(selectedWish)}`;
-
-    copyShareLink.onclick = () => {
-      navigator.clipboard.writeText(shareUrl);
-      copyShareLink.innerHTML = `<i class="fa-solid fa-check text-green-400"></i> Copied!`;
-      setTimeout(() => (copyShareLink.innerHTML = `<i class="fa-solid fa-link"></i> Copy Link`), 2000);
-    };
-
-    whatsappShare.onclick = () => {
-      const text = encodeURIComponent(`🪔 *Happy Diwali ${recipient}!* ✨\n\nI dedicated a digital Diya for you on DiyaVerse:\n${shareUrl}`);
-      window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
-    };
-  }, 350);
-});
-
-// Check URL Params
-function checkUrlGreeting() {
-  const params = new URLSearchParams(window.location.search);
-  const recipient = params.get("to");
-  const sender = params.get("from");
-  const wish = params.get("wish");
-
-  if (recipient) {
-    switchTab('greetings');
-    document.getElementById("personalizedBanner").classList.remove("hidden");
-    document.getElementById("recipientNameDisplay").innerText = recipient;
-    document.getElementById("customWishDisplay").innerText = wish
-      ? `"${decodeURIComponent(wish)}" — With warmth, ${sender || "A Well-wisher"}`
-      : `Wishing you infinite joy, radiant health, and boundless prosperity this Deepavali! — ${sender || "A Well-wisher"}`;
-  }
+function updatePreview() {
+  document.getElementById("previewRecipient").textContent = `To ${recipientInput.value || "Friends & Family"}`;
+  document.getElementById("previewSender").textContent = senderInput.value || "A Well-wisher";
+  document.getElementById("previewMessage").textContent = `"${messageInput.value}"`;
 }
-checkUrlGreeting();
+[recipientInput, senderInput, messageInput].forEach(inp => inp && inp.addEventListener("input", updatePreview));
+
+const aiMessages = [
+  "May the light of Diwali fill your life with eternal happiness, prosperity, and radiant good health.",
+  "Wishing that Goddess Lakshmi bestows eightfold wealth and spiritual calm upon your family.",
+  "Spark high, conquer every new horizon, and celebrate a joyful festival of lights!"
+];
+let aiIdx = 0;
+function cycleAiMessage() {
+  aiIdx = (aiIdx + 1) % aiMessages.length;
+  messageInput.value = aiMessages[aiIdx];
+  updatePreview();
+}
+
+function setCardTheme(t) {
+  const card = document.getElementById("greetingPreviewCard");
+  document.querySelectorAll(".theme-opt").forEach(btn => btn.classList.remove("active-theme"));
+  if (t === 'traditional') card.style.background = "linear-gradient(to bottom, #1a0f2e, #0c051a)";
+  if (t === 'luxury') card.style.background = "linear-gradient(to bottom, #2b1704, #0d0601)";
+  if (t === 'minimal') card.style.background = "#0c0a09";
+  if (t === 'spiritual') card.style.background = "linear-gradient(to bottom, #14052b, #06020f)";
+}
+
+function copyShareGreetingLink() {
+  const url = `${window.location.origin}${window.location.pathname}?to=${encodeURIComponent(recipientInput.value)}&from=${encodeURIComponent(senderInput.value)}`;
+  navigator.clipboard.writeText(url);
+  alert("Greeting link copied!");
+}
+
+function shareGreetingWhatsApp() {
+  const text = encodeURIComponent(`🪔 *Shubh Deepavali ${recipientInput.value}!* ✨\n\n"${messageInput.value}"\n— With warmth, ${senderInput.value}`);
+  window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+}
+
+// PHOTO STUDIO
+const photoUpload = document.getElementById("photoUpload");
+const userPhotoDisplay = document.getElementById("userPhotoDisplay");
+const photoPlaceholder = document.getElementById("photoPlaceholder");
+const photoCaption = document.getElementById("photoCaption");
+const displayPhotoCaption = document.getElementById("displayPhotoCaption");
+
+if (photoUpload) {
+  photoUpload.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        userPhotoDisplay.src = ev.target.result;
+        userPhotoDisplay.classList.remove("hidden");
+        photoPlaceholder.classList.add("hidden");
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+}
+if (photoCaption) {
+  photoCaption.addEventListener("input", () => {
+    displayPhotoCaption.textContent = `"${photoCaption.value}"`;
+  });
+}
+function setPhotoFrame(type) {
+  const frame = document.getElementById("photoFrameCard");
+  if (type === 'gold') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-amber-400/80 bg-[#120824] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+  if (type === 'marigold') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-orange-500/80 bg-[#1a0a05] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+  if (type === 'diya') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-yellow-300 bg-[#070312] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+  if (type === 'velvet') frame.className = "w-full max-w-xs rounded-3xl p-5 border-4 border-rose-900 bg-[#1f030d] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]";
+}
+function downloadPhotoCard() {
+  alert("Framed festive card generated! Take a screenshot or press Ctrl + P to save.");
+}
+
+// SKY LANTERNS
+let lanternColor = "#ff9800";
+function setLanternColor(c) { lanternColor = c; }
+function launchInteractiveLantern() {
+  const wish = document.getElementById("lanternWish").value.trim() || "Peace and health to all";
+  const name = document.getElementById("lanternName").value.trim() || "Anonymous";
+  
+  const lantern = document.createElement("div");
+  lantern.className = "lantern";
+  lantern.style.left = `${Math.random() * 85 + 5}%`;
+  lantern.style.backgroundColor = lanternColor;
+  lanternsContainer.appendChild(lantern);
+  setTimeout(() => lantern.remove(), 16000);
+
+  const list = document.getElementById("lanternWishesList");
+  const entry = document.createElement("div");
+  entry.className = "p-2 rounded-lg bg-amber-950/20 border border-amber-500/10";
+  entry.innerHTML = `"${wish}" — <strong>${name}</strong>`;
+  list.prepend(entry);
+
+  audio.playDiyaChord();
+  launchConfetti();
+}
+
+// MYSTERY GIFT BOX
+const gifts = [
+  { title: "Divine Abundance & Inner Peace", desc: "May the divine grace of Goddess Lakshmi bless your home with unshakeable contentment, radiant health, and boundless generosity." },
+  { title: "Vijaya & Radiance", desc: "May fearlessness accompany every endeavor. Spark high and conquer every academic and creative ambition this year!" },
+  { title: "Arogya & Harmony", desc: "May all disharmony dissolve in the warmth of holy diyas, bringing strength, laughter, and calm to your loved ones." }
+];
+function openMysteryGift() {
+  const selected = gifts[Math.floor(Math.random() * gifts.length)];
+  document.getElementById("giftTitle").textContent = selected.title;
+  document.getElementById("giftDesc").textContent = `"${selected.desc}"`;
+  document.getElementById("giftReveal").classList.remove("hidden");
+  audio.playDiyaChord();
+  launchConfetti();
+}
 
 // COUNTDOWN TIMER
 function updateCountdown() {
@@ -396,3 +462,74 @@ function updateCountdown() {
 }
 setInterval(updateCountdown, 1000);
 updateCountdown();
+
+// PERSISTENT AMBIENT FESTIVE BGM (Raag Bhairav / Tanpura Harmonics)
+let bgmCtx = null;
+let bgmMasterGain = null;
+let isBgmPlaying = false;
+let bgmLoopTimer = null;
+
+function initBgmAudio() {
+  if (!bgmCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    bgmCtx = new AudioContextClass();
+    bgmMasterGain = bgmCtx.createGain();
+    bgmMasterGain.gain.setValueAtTime(0.001, bgmCtx.currentTime);
+    bgmMasterGain.connect(bgmCtx.destination);
+  }
+}
+
+function playTanpuraPluck(freq, delay, duration = 3.5) {
+  if (!isBgmPlaying || !bgmCtx) return;
+  const osc = bgmCtx.createOscillator();
+  const pluckGain = bgmCtx.createGain();
+  
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, bgmCtx.currentTime + delay);
+
+  pluckGain.gain.setValueAtTime(0.001, bgmCtx.currentTime + delay);
+  pluckGain.gain.exponentialRampToValueAtTime(0.06, bgmCtx.currentTime + delay + 0.1);
+  pluckGain.gain.exponentialRampToValueAtTime(0.0001, bgmCtx.currentTime + delay + duration);
+
+  osc.connect(pluckGain);
+  pluckGain.connect(bgmMasterGain);
+
+  osc.start(bgmCtx.currentTime + delay);
+  osc.stop(bgmCtx.currentTime + delay + duration + 0.1);
+}
+
+function runBgmPattern() {
+  if (!isBgmPlaying) return;
+  const notes = [216, 324, 288, 432];
+  notes.forEach((freq, i) => {
+    playTanpuraPluck(freq, i * 1.2, 4.0);
+  });
+  bgmLoopTimer = setTimeout(runBgmPattern, 5200);
+}
+
+function toggleFestiveBgm() {
+  initBgmAudio();
+  if (bgmCtx.state === 'suspended') {
+    bgmCtx.resume();
+  }
+
+  const icon = document.getElementById("bgmIcon");
+  const status = document.getElementById("bgmStatusText");
+  const dot = document.getElementById("bgmEqDot");
+
+  if (!isBgmPlaying) {
+    isBgmPlaying = true;
+    bgmMasterGain.gain.exponentialRampToValueAtTime(0.12, bgmCtx.currentTime + 1);
+    runBgmPattern();
+    if (icon) icon.className = "fa-solid fa-pause";
+    if (status) status.textContent = "Playing Sacred Meditative Raga";
+    if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping";
+  } else {
+    isBgmPlaying = false;
+    clearTimeout(bgmLoopTimer);
+    bgmMasterGain.gain.exponentialRampToValueAtTime(0.0001, bgmCtx.currentTime + 0.5);
+    if (icon) icon.className = "fa-solid fa-play";
+    if (status) status.textContent = "Paused • Tap to Resume";
+    if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-amber-500";
+  }
+}
