@@ -1,5 +1,4 @@
-// NATIVE WEB AUDIO HARMONIC BANSURI FLUTE & SITAR SYNTHESIZER
-// (100% reliable in every browser, zero external mp3 CORS drops)
+// High-Volume Bansuri Flute & Tanpura Synthesis Engine
 let audioCtx = null;
 let bgmGain = null;
 let isMusicActive = false;
@@ -19,34 +18,43 @@ function initAudioSystem() {
   }
 }
 
-function playFluteNote(freq, delay, duration = 1.6) {
+function playFluteNote(freq, delay, duration = 1.8) {
   if (!isMusicActive || !audioCtx) return;
-  const osc = audioCtx.createOscillator();
+
+  const osc1 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
   const noteGain = audioCtx.createGain();
 
-  // Pure flute-like sine wave with soft envelope
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+  // Dual tone generation: Sine body + Triangle resonance
+  osc1.type = "sine";
+  osc2.type = "triangle";
 
+  osc1.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+  osc2.frequency.setValueAtTime(freq * 2, audioCtx.currentTime + delay);
+
+  // Maximum audible output
   noteGain.gain.setValueAtTime(0.001, audioCtx.currentTime + delay);
-  noteGain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + delay + 0.15);
+  noteGain.gain.exponentialRampToValueAtTime(0.85, audioCtx.currentTime + delay + 0.12);
   noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delay + duration);
 
-  osc.connect(noteGain);
+  osc1.connect(noteGain);
+  osc2.connect(noteGain);
   noteGain.connect(bgmGain);
 
-  osc.start(audioCtx.currentTime + delay);
-  osc.stop(audioCtx.currentTime + delay + duration + 0.1);
+  osc1.start(audioCtx.currentTime + delay);
+  osc2.start(audioCtx.currentTime + delay);
+  osc1.stop(audioCtx.currentTime + delay + duration + 0.1);
+  osc2.stop(audioCtx.currentTime + delay + duration + 0.1);
 }
 
 function runFluteRaga() {
   if (!isMusicActive) return;
-  // Meditative Indian Pentatonic Raag (Sa-Re-Ga-Pa-Dha-Sa')
+  // Meditative Indian Pentatonic Raag
   const ragaScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 440.00, 392.00, 329.63];
   ragaScale.forEach((freq, idx) => {
-    playFluteNote(freq, idx * 0.55, 1.2);
+    playFluteNote(freq, idx * 0.6, 1.4);
   });
-  musicLoopTimer = setTimeout(runFluteRaga, 5200);
+  musicLoopTimer = setTimeout(runFluteRaga, 5600);
 }
 
 function toggleHarmonicBgm() {
@@ -56,16 +64,16 @@ function toggleHarmonicBgm() {
 
   if (!isMusicActive) {
     isMusicActive = true;
-    bgmGain.gain.exponentialRampToValueAtTime(0.35, audioCtx.currentTime + 0.5);
+    bgmGain.gain.exponentialRampToValueAtTime(0.95, audioCtx.currentTime + 0.4);
     runFluteRaga();
-    icon.className = "fa-solid fa-pause";
-    text.textContent = "Music: Playing 🎵";
+    if (icon) icon.className = "fa-solid fa-pause";
+    if (text) text.textContent = "Music: Playing 🎵";
   } else {
     isMusicActive = false;
     clearTimeout(musicLoopTimer);
     bgmGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-    icon.className = "fa-solid fa-play";
-    text.textContent = "Bansuri Flute";
+    if (icon) icon.className = "fa-solid fa-play";
+    if (text) text.textContent = "Bansuri Flute";
   }
 }
 
@@ -95,7 +103,7 @@ function switchNav(id) {
   if (id === "mandala") renderMandala("sriyantra");
 }
 
-// PANCH TATTVA DIYA LOGIC (FIXED: Never overwrites layout dimensions)
+// PANCH TATTVA DIYA
 let currentTattva = "agni";
 const tattvaStyles = {
   agni: {
@@ -118,7 +126,7 @@ const tattvaStyles = {
   },
   prithvi: {
     bg: "linear-gradient(to top, #047857, #4ade80, #fef08a)",
-    glow: "rgba(16, 185, 129, 0.5)",
+    glow: "rgba(168, 85, 247, 0.5)",
     shadow: "#10b981",
     label: "Prithvi Consecrated 🌿"
   },
@@ -140,7 +148,6 @@ function setTattva(t) {
   const glow = document.getElementById("diyaGlow");
   const prompt = document.getElementById("diyaPrompt");
 
-  // Keep layout intact, change visual properties
   flame.style.background = tattvaStyles[t].bg;
   flame.style.filter = `drop-shadow(0 0 25px ${tattvaStyles[t].shadow})`;
   flame.classList.add("flame-lit");
@@ -263,9 +270,10 @@ function renderScene() {
 }
 renderScene();
 
-// POPULATE DAY SELECTOR (1 to 31)
+// Day Selector (1 to 31)
 const daySelect = document.getElementById("birthDaySelect");
 if (daySelect) {
+  daySelect.innerHTML = "";
   for (let d = 1; d <= 31; d++) {
     const opt = document.createElement("option");
     opt.value = d;
@@ -275,7 +283,7 @@ if (daySelect) {
   }
 }
 
-// BHAGYANK ENGINE
+// Bhagyank Engine
 function calculateBhagyank() {
   const day = parseInt(document.getElementById("birthDaySelect").value) || 5;
   const month = parseInt(document.getElementById("birthMonthSelect").value) || 7;
@@ -305,7 +313,7 @@ function calculateBhagyank() {
   triggerConfetti();
 }
 
-// NAKSHATRA & RASHI VEDIC DATABASE
+// Nakshatra & Rashi Database
 const rashiDB = {
   mesha: {
     title: "Mesha Rashi (Aries)",
@@ -413,7 +421,7 @@ function applyRashiToSanad() {
   switchNav("certificate");
 }
 
-// VIRTUAL AARTI SPINNER
+// Aarti Spinner
 let aartiRotations = 0;
 let lastAngle = 0;
 function spinAarti(e) {
@@ -432,7 +440,7 @@ function spinAarti(e) {
   lastAngle = deg;
 }
 
-// MARIGOLD TORAN BUILDER
+// Marigold Toran
 function addToranBlossom() {
   const container = document.getElementById("toranString");
   const blossoms = [
@@ -448,7 +456,7 @@ function addToranBlossom() {
   triggerConfetti();
 }
 
-// SACRED MANDALA RENDERER
+// Mandala Canvas
 function renderMandala(type) {
   const mCanvas = document.getElementById("mandalaCanvas");
   if (!mCanvas) return;
@@ -499,7 +507,7 @@ function clearMandalaCanvas() {
   mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 }
 
-// ECO-SANKALPA SIGNER
+// Sankalpa Signer
 let pledgeCount = 2481;
 function signPledge(pledge, btn) {
   pledgeCount++;
@@ -510,7 +518,7 @@ function signPledge(pledge, btn) {
   triggerConfetti();
 }
 
-// SANAD CERTIFICATE CUSTOMIZER & DOWNLOADER
+// Sanad Certificate Exporter
 const sanadNameInput = document.getElementById("sanadNameInput");
 const sanadFamilyInput = document.getElementById("sanadFamilyInput");
 
@@ -546,7 +554,7 @@ function shareSanadWhatsApp() {
   window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
 }
 
-// COUNTDOWN TIMER
+// Countdown Timer
 function updateCountdown() {
   const target = new Date("November 8, 2026 18:00:00").getTime();
   const now = new Date().getTime();
