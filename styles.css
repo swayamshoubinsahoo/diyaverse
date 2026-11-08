@@ -19,10 +19,53 @@
 
 .flame-lit {
   opacity: 1 !important;
-  transform: scale(1) !important;
   animation: naturalFlicker 1.8s infinite ease-in-out alternate;
 }
 
-.aura-lit {
-  background-color: rgba(245, 158, 11, 0.45) !important;
+.glow-lit {
+  background-color: rgba(245, 158, 11, 0.5) !important;
+}
+
+@keyframes floatLantern {
+  0% {
+    transform: translateY(110vh) scale(0.6);
+    opacity: 0;
+  }
+  15% { opacity: 0.85; }
+  85% { opacity: 0.85; }
+  100% {
+    transform: translateY(-15vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.lantern {
+  position: absolute;
+  width: 20px;
+  height: 30px;
+  border-radius: 6px 6px 12px 12px;
+  background: radial-gradient(circle at 50% 65%, #fff3b0 0%, #ff9800 60%, #e65100 100%);
+  box-shadow: 0 0 16px rgba(255, 152, 0, 0.85);
+  animation: floatLantern 15s linear infinite;
+  pointer-events: none;
+}
+
+.active-pill {
+  background: linear-gradient(to right, #f59e0b, #eab308) !important;
+  color: #170d02 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.35);
+}
+
+.active-tattva {
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+  border-color: #fbbf24 !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

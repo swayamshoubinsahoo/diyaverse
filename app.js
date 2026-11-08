@@ -1,92 +1,128 @@
-// Quantum Acoustic & Particle Synthesis Engine
-class AcousticEngine {
-  constructor() {
-    this.ctx = null;
-    this.isMuted = true;
-    this.droneGain = null;
-    this.droneOscs = [];
-  }
-  init() {
-    if (!this.ctx) {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      this.ctx = new AudioCtx();
-      this.setupDrone();
-    }
-    if (this.ctx.state === "suspended") {
-      this.ctx.resume();
-    }
-  }
-  setupDrone() {
-    this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
-    this.droneGain.connect(this.ctx.destination);
+// REAL MELODIC BANSURI FLUTE & SITAR AUDIO
+const bgm = document.getElementById("bgmAudio");
+let isMusicPlaying = false;
+let sparklerMode = false;
 
-    // 432 Hz Pure Indian Meditative Tuning (Sa - Pa - Sa' fundamental drone)
-    const baseFreqs = [216, 324, 432];
-    baseFreqs.forEach(freq => {
-      const osc = this.ctx.createOscillator();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      osc.connect(this.droneGain);
-      osc.start();
-      this.droneOscs.push(osc);
+function toggleBgmMusic() {
+  const icon = document.getElementById("musicIcon");
+  const text = document.getElementById("musicText");
+
+  if (!isMusicPlaying) {
+    bgm.volume = 0.55;
+    bgm.play().then(() => {
+      isMusicPlaying = true;
+      icon.className = "fa-solid fa-pause";
+      text.textContent = "Music: Playing 🎵";
+    }).catch(e => {
+      console.warn("Autoplay audio waiting for interaction");
+    });
+  } else {
+    bgm.pause();
+    isMusicPlaying = false;
+    icon.className = "fa-solid fa-play";
+    text.textContent = "Bansuri Flute";
+  }
+}
+
+// Sparkler Toggle
+function toggleSparklerTrail() {
+  sparklerMode = !sparklerMode;
+  document.getElementById("sparklerLabel").textContent = sparklerMode ? "Sparklers: ON ✨" : "Sparklers: OFF";
+  document.getElementById("sparklerModeBtn").classList.toggle("border-yellow-400", sparklerMode);
+}
+
+// NAVIGATION ROUTING
+function switchNav(id) {
+  document.querySelectorAll(".page-panel").forEach(p => p.classList.add("hidden"));
+  const target = document.getElementById(`panel-${id}`);
+  if (target) target.classList.remove("hidden");
+
+  document.querySelectorAll(".nav-pill").forEach(btn => {
+    btn.classList.remove("active-pill");
+    btn.classList.add("text-amber-200/70");
+  });
+  const activeBtn = document.getElementById(`btn-${id}`);
+  if (activeBtn) {
+    activeBtn.classList.add("active-pill");
+    activeBtn.classList.remove("text-amber-200/70");
+  }
+}
+
+// PANCH TATTVA ELEMENTAL SELECTOR
+let currentTattva = "agni";
+const tattvaColors = {
+  agni: { flame: "from-red-600 via-amber-400 to-yellow-100", glow: "rgba(245, 158, 11, 0.5)", shadow: "#ff9900", prompt: "Agni Consecrated 🔥" },
+  vayu: { flame: "from-cyan-700 via-teal-300 to-white", glow: "rgba(20, 184, 166, 0.5)", shadow: "#06b6d4", prompt: "Vayu Consecrated 💨" },
+  jal: { flame: "from-blue-700 via-sky-300 to-white", glow: "rgba(14, 165, 233, 0.5)", shadow: "#38bdf8", prompt: "Jal Consecrated 🌊" },
+  prithvi: { flame: "from-emerald-700 via-green-400 to-yellow-200", glow: "rgba(16, 185, 129, 0.5)", shadow: "#10b981", prompt: "Prithvi Consecrated 🌿" },
+  akasha: { flame: "from-purple-800 via-fuchsia-400 to-amber-200", glow: "rgba(168, 85, 247, 0.5)", shadow: "#c084fc", prompt: "Akasha Consecrated 🌌" }
+};
+
+function setTattva(t) {
+  currentTattva = t;
+  document.querySelectorAll(".tattva-chip").forEach(c => c.classList.remove("active-tattva"));
+  const activeBtn = document.getElementById(`btn-tattva-${t}`);
+  if (activeBtn) activeBtn.classList.add("active-tattva");
+
+  const flame = document.getElementById("diyaFlame");
+  const glow = document.getElementById("diyaGlow");
+  const prompt = document.getElementById("diyaPrompt");
+
+  flame.className = `relative w-9 h-18 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] bg-gradient-to-t ${tattvaColors[t].flame} flame-lit`;
+  flame.style.filter = `drop-shadow(0 0 25px ${tattvaColors[t].shadow})`;
+  glow.style.backgroundColor = tattvaColors[t].glow;
+  prompt.textContent = tattvaColors[t].prompt;
+  triggerConfetti();
+}
+
+// DIYA LIGHTING
+let isLit = false;
+function kindleDiya() {
+  const flame = document.getElementById("diyaFlame");
+  const glow = document.getElementById("diyaGlow");
+  const prompt = document.getElementById("diyaPrompt");
+
+  if (!isLit) {
+    isLit = true;
+    flame.classList.add("flame-lit");
+    glow.classList.add("glow-lit");
+    prompt.textContent = "Akhand Diya Consecrated ✨";
+    prompt.classList.replace("text-amber-300", "text-yellow-200");
+    triggerConfetti();
+  } else {
+    triggerConfetti();
+  }
+}
+
+function triggerConfetti() {
+  if (typeof confetti === "function") {
+    confetti({
+      particleCount: 75,
+      spread: 75,
+      origin: { y: 0.65 },
+      colors: ["#FFD700", "#FF8C00", "#FF4500", "#FFF"]
     });
   }
-  toggleAudioState() {
-    this.init();
-    this.isMuted = !this.isMuted;
-    if (!this.isMuted) {
-      this.droneGain.gain.exponentialRampToValueAtTime(0.18, this.ctx.currentTime + 1);
-    } else {
-      this.droneGain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.5);
-    }
-    return !this.isMuted;
-  }
-  playChime(pitchMultiplier = 1) {
-    if (this.isMuted) return;
-    this.init();
-    
-    // Raga Bilawal Pentatonic Scale
-    const scale = [216, 243, 270, 324, 364, 432, 486, 540];
-    const freq = scale[Math.floor(Math.random() * scale.length)] * pitchMultiplier;
-
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-
-    gain.gain.setValueAtTime(0.001, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.3, this.ctx.currentTime + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 2.0);
-
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-
-    osc.start();
-    osc.stop(this.ctx.currentTime + 2.1);
-  }
 }
 
-const audio = new AcousticEngine();
-
-function toggleAudio() {
-  const active = audio.toggleAudioState();
-  const icon = document.getElementById("audioIcon");
-  const label = document.getElementById("audioStatus");
-  if (active) {
-    icon.className = "fa-solid fa-volume-high text-yellow-400";
-    label.textContent = "Sound: 432Hz Drone";
-  } else {
-    icon.className = "fa-solid fa-volume-xmark";
-    label.textContent = "Sound: Muted";
-  }
+// SKY LANTERNS
+const lanternsLayer = document.getElementById("skyLanternsLayer");
+function spawnSkyLantern() {
+  const lantern = document.createElement("div");
+  lantern.className = "lantern";
+  lantern.style.left = `${Math.random() * 95}%`;
+  lantern.style.animationDuration = `${11 + Math.random() * 8}s`;
+  lantern.style.opacity = `${0.6 + Math.random() * 0.4}`;
+  lanternsLayer.appendChild(lantern);
+  setTimeout(() => lantern.remove(), 19000);
 }
+setInterval(spawnSkyLantern, 2500);
+for (let i = 0; i < 5; i++) spawnSkyLantern();
 
-// Stage Canvas Physics
-const canvas = document.getElementById("stageCanvas");
+// AMBIENT FIREWORKS CANVAS
+const canvas = document.getElementById("ambientCanvas");
 const ctx = canvas.getContext("2d");
-let sparks = [];
+let particles = [];
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -95,128 +131,305 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-class QuantumSpark {
-  constructor(x, y, vx, vy, color, size, life) {
-    this.x = x;
-    this.y = y;
-    this.vx = vx;
-    this.vy = vy;
-    this.color = color;
-    this.size = size;
-    this.life = life;
-    this.maxLife = life;
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.vy += 0.04; // Gravity
-    this.vx *= 0.98; // Atmospheric Drag
-    this.life -= 1;
-  }
-  draw() {
-    const alpha = Math.max(0, this.life / this.maxLife);
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = this.color;
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-function spawnBurst(x, y) {
-  const colors = ["#f59e0b", "#fbbf24", "#fb923c", "#ef4444", "#38bdf8", "#ffffff"];
-  for (let i = 0; i < 40; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = Math.random() * 5 + 1.5;
-    sparks.push(new QuantumSpark(
-      x, y,
-      Math.cos(angle) * speed,
-      Math.sin(angle) * speed,
-      colors[Math.floor(Math.random() * colors.length)],
-      Math.random() * 2.5 + 1.2,
-      Math.floor(Math.random() * 50 + 40)
-    ));
-  }
-  audio.playChime();
-}
-
 window.addEventListener("pointerdown", (e) => {
-  if (e.target.closest("#diyaTouchZone, header, footer")) return;
+  if (e.target.closest("input, button, select, #diyaContainer, #sanadCard, #aartiPlate, #toranString")) return;
   spawnBurst(e.clientX, e.clientY);
 });
 
-function loop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  for (let i = sparks.length - 1; i >= 0; i--) {
-    sparks[i].update();
-    sparks[i].draw();
-    if (sparks[i].life <= 0) {
-      sparks.splice(i, 1);
+window.addEventListener("pointermove", (e) => {
+  if (sparklerMode) {
+    for (let i = 0; i < 3; i++) {
+      particles.push({
+        x: e.clientX,
+        y: e.clientY,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        alpha: 1,
+        color: Math.random() > 0.5 ? "#FFD700" : "#FF8C00",
+        size: Math.random() * 2 + 1
+      });
     }
-  }
-
-  document.getElementById("sparkCountLabel").textContent = `${sparks.length} Active`;
-  requestAnimationFrame(loop);
-}
-loop();
-
-function clearCanvasSparks() {
-  sparks = [];
-}
-
-// Thermal Ignition Interaction
-let isLit = false;
-let charge = 0;
-let chargeInterval = null;
-const diyaTouchZone = document.getElementById("diyaTouchZone");
-const chargeFill = document.getElementById("chargeFill");
-const flameElement = document.getElementById("flameElement");
-const thermalAura = document.getElementById("thermalAura");
-const ignitionLabel = document.getElementById("ignitionLabel");
-
-function startCharge() {
-  if (isLit) return;
-  chargeInterval = setInterval(() => {
-    charge = Math.min(100, charge + 8);
-    chargeFill.style.width = `${charge}%`;
-    if (charge >= 100) {
-      igniteDiya();
-      clearInterval(chargeInterval);
-    }
-  }, 40);
-}
-
-function endCharge() {
-  clearInterval(chargeInterval);
-  if (!isLit) {
-    charge = 0;
-    chargeFill.style.width = "0%";
-  }
-}
-
-function igniteDiya() {
-  isLit = true;
-  flameElement.classList.add("flame-lit");
-  thermalAura.classList.add("aura-lit");
-  ignitionLabel.textContent = "Flame Consecrated ✨";
-  ignitionLabel.classList.add("text-yellow-300");
-
-  const rect = diyaTouchZone.getBoundingClientRect();
-  spawnBurst(rect.left + rect.width / 2, rect.top + 20);
-}
-
-diyaTouchZone.addEventListener("pointerdown", startCharge);
-window.addEventListener("pointerup", endCharge);
-diyaTouchZone.addEventListener("click", () => {
-  if (!isLit) {
-    igniteDiya();
-  } else {
-    const rect = diyaTouchZone.getBoundingClientRect();
-    spawnBurst(rect.left + rect.width / 2, rect.top + 20);
   }
 });
+
+function spawnBurst(x, y) {
+  const colors = ["#f59e0b", "#fbbf24", "#fb923c", "#ef4444", "#38bdf8", "#34d399"];
+  for (let i = 0; i < 28; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 4.5 + 1.2;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      alpha: 1,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 2.4 + 1
+    });
+  }
+}
+
+function renderScene() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach((p, index) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.035;
+    p.alpha -= 0.015;
+    if (p.alpha <= 0) {
+      particles.splice(index, 1);
+    } else {
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  });
+  requestAnimationFrame(renderScene);
+}
+renderScene();
+
+// NAKSHATRA & RASHI VEDIC DATABASE
+const rashiDB = {
+  mesha: {
+    title: "Mesha Rashi (Aries)",
+    sub: "Lord Mangala • Agni Tattva",
+    symbol: "♈",
+    shloka: "॥ ॐ धरणीगर्भसंभूतं विद्युत्कान्तिसमप्रभम् । कुमारं शक्तिहस्तं च मंगलं प्रणमाम्यहम् ॥",
+    blessing: "May this Deepavali ignite courageous leadership, clear triumph over obstacles, and unending energy in your academic and creative pursuits."
+  },
+  vrishabha: {
+    title: "Vrishabha Rashi (Taurus)",
+    sub: "Lord Shukra • Prithvi Tattva",
+    symbol: "♉",
+    shloka: "॥ ॐ हिमकुन्दमृणालाभं दैत्यानां परमं गुरुम् । सर्वशास्त्रप्रवक्तारं भार्गवं प्रणमाम्यहम् ॥",
+    blessing: "May Goddess Mahalakshmi bestow lasting material security, aesthetic brilliance, and tranquil harmony upon your home."
+  },
+  mithuna: {
+    title: "Mithuna Rashi (Gemini)",
+    sub: "Lord Budha • Vayu Tattva",
+    symbol: "♊",
+    shloka: "॥ ॐ प्रियंगुकलिकाश्यामं रूपेणाप्रतिमं बुधम् । सौम्यं सौम्यगुणोपेतं तं बुधं प्रणमाम्यहम् ॥",
+    blessing: "May supreme intellect, persuasive speech, and breakthrough clarity guide all your communications and technical coding endeavors."
+  },
+  karka: {
+    title: "Karka Rashi (Cancer)",
+    sub: "Lord Chandra • Jal Tattva",
+    symbol: "♋",
+    shloka: "॥ ॐ दधिशंखतुषाराभं क्षीरोदार्णवसंभवम् । नमामि शशिनं सोमं शम्भोर्मुकुटभूषणम् ॥",
+    blessing: "May deep emotional peace, familial warmth, and boundless empathetic intuition illuminate your days with sweetness."
+  },
+  simha: {
+    title: "Simha Rashi (Leo)",
+    sub: "Lord Surya • Agni Tattva",
+    symbol: "♌",
+    shloka: "॥ ॐ जपाकुसुमसंकाशं काश्यपेयं महाद्युतिम् । तमोऽरिं सर्वपापघ्नं प्रणतोऽस्मि दिवाकरम् ॥",
+    blessing: "May the golden radiance of the Sun grant you unshakeable self-belief, executive authority, and sovereign victory."
+  },
+  kanya: {
+    title: "Kanya Rashi (Virgo)",
+    sub: "Lord Budha • Prithvi Tattva",
+    symbol: "♍",
+    shloka: "॥ ॐ सौम्यरूपाय विद्महे वाणेशाय धीमहि तन्नो सौम्यः प्रचोदयात् ॥",
+    blessing: "May precision, vibrant good health, and masterful craftsmanship accompany every milestone you create this year."
+  },
+  tula: {
+    title: "Tula Rashi (Libra)",
+    sub: "Lord Shukra • Vayu Tattva",
+    symbol: "♎",
+    shloka: "॥ ॐ भार्गवाय नमः । सर्वसौभाग्यप्रदायिने नमः ॥",
+    blessing: "May perfect balance, graceful partnerships, and joyous celebration flourish abundantly in your household."
+  },
+  vrishchika: {
+    title: "Vrishchika Rashi (Scorpio)",
+    sub: "Lord Mangala • Jal Tattva",
+    symbol: "♏",
+    shloka: "॥ ॐ क्रां क्रीं क्रौं सः भौमाय नमः ॥",
+    blessing: "May transformative resilience, fearless insight, and profound inner power conquer all challenges."
+  },
+  dhanu: {
+    title: "Dhanu Rashi (Sagittarius)",
+    sub: "Lord Brihaspati • Agni Tattva",
+    symbol: "♐",
+    shloka: "॥ ॐ देवानां च ऋषीणां च गुरुं काञ्चनसंनिभम् । बुद्धिभूतं त्रिलोकेशं तं नमामि बृहस्पतिम् ॥",
+    blessing: "May expansive wisdom, spiritual elevation, and boundless optimism guide your studies to the highest honors."
+  },
+  makara: {
+    title: "Makara Rashi (Capricorn)",
+    sub: "Lord Shani • Prithvi Tattva",
+    symbol: "♑",
+    shloka: "॥ ॐ नीलांजनसमाभासं रविपुत्रं यमाग्रजम् । छायामार्तण्डसंभूतं तं नमामि शनैश्चरम् ॥",
+    blessing: "May disciplined perseverance, structural excellence, and honorable achievement crown your persistent efforts."
+  },
+  kumbha: {
+    title: "Kumbha Rashi (Aquarius)",
+    sub: "Lord Shani • Vayu Tattva",
+    symbol: "♒",
+    shloka: "॥ ॐ शन्नो देवि रभिष्टय आपो भवन्तु पीतये ॥",
+    blessing: "May visionary innovation, humanitarian ideals, and futuristic technical creations shine forth from your mind."
+  },
+  meena: {
+    title: "Meena Rashi (Pisces)",
+    sub: "Lord Brihaspati • Jal Tattva",
+    symbol: "♓",
+    shloka: "॥ ॐ विष्णवे नमः । ॐ नमो नारायणाय ॥",
+    blessing: "May divine grace, spiritual serenity, and infinite creative inspiration bless your soul and loved ones."
+  }
+};
+
+let activeRashiKey = "mesha";
+
+function selectRashi(key) {
+  activeRashiKey = key;
+  const data = rashiDB[key];
+  if (!data) return;
+
+  document.getElementById("rashiTitle").textContent = data.title;
+  document.getElementById("rashiSub").textContent = data.sub;
+  document.getElementById("rashiSymbol").textContent = data.symbol;
+  document.getElementById("rashiShloka").textContent = data.shloka;
+  document.getElementById("rashiBlessing").textContent = `"${data.blessing}"`;
+
+  triggerConfetti();
+}
+
+function applyRashiToSanad() {
+  const data = rashiDB[activeRashiKey];
+  document.getElementById("sanadBlessingText").textContent = `"${data.blessing}"`;
+  switchNav("certificate");
+}
+
+// BHAGYANK NUMEROLOGY ENGINE
+function calculateBhagyank() {
+  const dob = document.getElementById("birthDateInput").value;
+  if (!dob) {
+    alert("Please select your birth date.");
+    return;
+  }
+  const digits = dob.replace(/-/g, "").split("").map(Number);
+  let sum = digits.reduce((a, b) => a + b, 0);
+  while (sum > 9) {
+    sum = sum.toString().split("").map(Number).reduce((a, b) => a + b, 0);
+  }
+
+  const profiles = {
+    1: { planet: "Surya (Sun) • Sovereign Leadership", desc: "You are destined for creative authority, unyielding self-confidence, and bold original creation." },
+    2: { planet: "Chandra (Moon) • Harmonious Intuition", desc: "You bring deep peace, emotional insight, and gentle artistic grace into every circle you touch." },
+    3: { planet: "Guru (Jupiter) • Sacred Wisdom", desc: "You possess high expansive intellect, natural teaching capabilities, and spiritual elevation." },
+    4: { planet: "Rahu • Disruptive Innovation", desc: "You break conventional bounds with out-of-the-box technical creativity and pioneering vision." },
+    5: { planet: "Budha (Mercury) • Wit & Quick Computation", desc: "You shine in fast communication, adaptive engineering, and commercial networking." },
+    6: { planet: "Shukra (Venus) • Abundance & Aesthetics", desc: "You attract luxurious harmony, artistic refinement, and joyous celebration into your home." },
+    7: { planet: "Ketu • Spiritual Clarity & Intuition", desc: "Your path is guided by analytical contemplation, philosophical depth, and sudden breakthroughs." },
+    8: { planet: "Shani (Saturn) • Unshakeable Mastery", desc: "You build enduring legacy through patient focus, discipline, and ironclad resilience." },
+    9: { planet: "Mangala (Mars) • Fearless Champion", desc: "You possess dynamic vitality, unyielding courage, and fierce passion to triumph over hurdles." }
+  };
+
+  const prof = profiles[sum] || profiles[1];
+  document.getElementById("bhagyankDigit").textContent = sum;
+  document.getElementById("bhagyankPlanet").textContent = prof.planet;
+  document.getElementById("bhagyankDesc").textContent = `"${prof.desc}"`;
+  document.getElementById("bhagyankResult").classList.remove("hidden");
+  triggerConfetti();
+}
+
+// VIRTUAL AARTI SPINNER
+let aartiRotations = 0;
+let lastAngle = 0;
+function spinAarti(e) {
+  const plate = document.getElementById("aartiPlate");
+  const rect = plate.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const rad = Math.atan2(e.clientY - cy, e.clientX - cx);
+  let deg = rad * (180 / Math.PI);
+  plate.style.transform = `rotate(${deg}deg)`;
+
+  if (Math.abs(deg - lastAngle) > 280) {
+    aartiRotations++;
+    document.getElementById("aartiCount").textContent = aartiRotations;
+  }
+  lastAngle = deg;
+}
+
+// MARIGOLD TORAN WEAVER
+function addToranBlossom() {
+  const container = document.getElementById("toranString");
+  const blossoms = [
+    { text: "🌼", bg: "bg-orange-500", glow: "#f97316" },
+    { text: "🌼", bg: "bg-yellow-400", glow: "#facc15" },
+    { text: "🍃", bg: "bg-emerald-600", glow: "#059669" }
+  ];
+  const choice = blossoms[Math.floor(Math.random() * blossoms.length)];
+  const item = document.createElement("div");
+  item.className = `w-8 h-8 rounded-full ${choice.bg} shadow-[0_0_12px_${choice.glow}] flex items-center justify-center text-xs animate-bounce`;
+  item.textContent = choice.text;
+  container.appendChild(item);
+  triggerConfetti();
+}
+
+// ECO-SANKALPA SIGNER
+let signedPledgeName = "Compassion for Animals";
+let pledgeCount = 2481;
+
+function signPledge(pledge, btn) {
+  signedPledgeName = pledge;
+  pledgeCount++;
+  document.getElementById("pledgeCounter").textContent = pledgeCount.toLocaleString();
+  document.getElementById("sanadPledgeTag").textContent = pledge;
+  btn.textContent = "Pledged! 🌿";
+  btn.classList.add("bg-emerald-500", "text-stone-900");
+  triggerConfetti();
+}
+
+// SANAD CERTIFICATE CUSTOMIZER & DOWNLOADER
+const sanadNameInput = document.getElementById("sanadNameInput");
+const sanadFamilyInput = document.getElementById("sanadFamilyInput");
+
+sanadNameInput.addEventListener("input", () => {
+  document.getElementById("sanadNameDisplay").textContent = sanadNameInput.value || "Swayam Shoubin Sahoo";
+});
+sanadFamilyInput.addEventListener("input", () => {
+  document.getElementById("sanadFamilyDisplay").textContent = sanadFamilyInput.value || "Cherished Friends & Mentors";
+});
+
+function downloadSanad() {
+  const card = document.getElementById("sanadCard");
+  if (typeof html2canvas === "function") {
+    html2canvas(card, { scale: 2, backgroundColor: "#04010a" }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = `Deepavali_Sanad_${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  } else {
+    alert("Press Ctrl + P to print or save your Sanad certificate.");
+  }
+}
+
+function shareSanadWhatsApp() {
+  const name = sanadNameInput.value;
+  const recipient = sanadFamilyInput.value;
+  const text = encodeURIComponent(`🪔 *Shubh Deepavali from ${name}!* ✨\n\nI consecrated a sacred Diya and generated our official Festive Sanad for ${recipient}.\nCheck it live: ${window.location.href}`);
+  window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+}
+
+// COUNTDOWN TIMER
+function updateCountdown() {
+  const target = new Date("November 8, 2026 18:00:00").getTime();
+  const now = new Date().getTime();
+  const diff = Math.max(0, target - now);
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+  document.getElementById("t-days").innerText = String(days).padStart(2, "0");
+  document.getElementById("t-hours").innerText = String(hours).padStart(2, "0");
+  document.getElementById("t-mins").innerText = String(mins).padStart(2, "0");
+  document.getElementById("t-secs").innerText = String(secs).padStart(2, "0");
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
