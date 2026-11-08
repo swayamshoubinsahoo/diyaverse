@@ -1,37 +1,82 @@
-// REAL MELODIC BANSURI FLUTE & SITAR AUDIO
-const bgm = document.getElementById("bgmAudio");
-let isMusicPlaying = false;
+// NATIVE WEB AUDIO HARMONIC BANSURI FLUTE & SITAR SYNTHESIZER
+// (100% reliable in every browser, zero external mp3 CORS drops)
+let audioCtx = null;
+let bgmGain = null;
+let isMusicActive = false;
+let musicLoopTimer = null;
 let sparklerMode = false;
 
-function toggleBgmMusic() {
+function initAudioSystem() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContextClass();
+    bgmGain = audioCtx.createGain();
+    bgmGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    bgmGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+}
+
+function playFluteNote(freq, delay, duration = 1.6) {
+  if (!isMusicActive || !audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const noteGain = audioCtx.createGain();
+
+  // Pure flute-like sine wave with soft envelope
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+
+  noteGain.gain.setValueAtTime(0.001, audioCtx.currentTime + delay);
+  noteGain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + delay + 0.15);
+  noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delay + duration);
+
+  osc.connect(noteGain);
+  noteGain.connect(bgmGain);
+
+  osc.start(audioCtx.currentTime + delay);
+  osc.stop(audioCtx.currentTime + delay + duration + 0.1);
+}
+
+function runFluteRaga() {
+  if (!isMusicActive) return;
+  // Meditative Indian Pentatonic Raag (Sa-Re-Ga-Pa-Dha-Sa')
+  const ragaScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 440.00, 392.00, 329.63];
+  ragaScale.forEach((freq, idx) => {
+    playFluteNote(freq, idx * 0.55, 1.2);
+  });
+  musicLoopTimer = setTimeout(runFluteRaga, 5200);
+}
+
+function toggleHarmonicBgm() {
+  initAudioSystem();
   const icon = document.getElementById("musicIcon");
   const text = document.getElementById("musicText");
 
-  if (!isMusicPlaying) {
-    bgm.volume = 0.55;
-    bgm.play().then(() => {
-      isMusicPlaying = true;
-      icon.className = "fa-solid fa-pause";
-      text.textContent = "Music: Playing 🎵";
-    }).catch(e => {
-      console.warn("Autoplay audio waiting for interaction");
-    });
+  if (!isMusicActive) {
+    isMusicActive = true;
+    bgmGain.gain.exponentialRampToValueAtTime(0.35, audioCtx.currentTime + 0.5);
+    runFluteRaga();
+    icon.className = "fa-solid fa-pause";
+    text.textContent = "Music: Playing 🎵";
   } else {
-    bgm.pause();
-    isMusicPlaying = false;
+    isMusicActive = false;
+    clearTimeout(musicLoopTimer);
+    bgmGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
     icon.className = "fa-solid fa-play";
     text.textContent = "Bansuri Flute";
   }
 }
 
-// Sparkler Toggle
+// Sparkler Trail
 function toggleSparklerTrail() {
   sparklerMode = !sparklerMode;
-  document.getElementById("sparklerLabel").textContent = sparklerMode ? "Sparklers: ON ✨" : "Sparklers: OFF";
+  document.getElementById("sparklerLabel").textContent = sparklerMode ? "Sparklers: ON ✨" : "Sparklers";
   document.getElementById("sparklerModeBtn").classList.toggle("border-yellow-400", sparklerMode);
 }
 
-// NAVIGATION ROUTING
+// Navigation Switching
 function switchNav(id) {
   document.querySelectorAll(".page-panel").forEach(p => p.classList.add("hidden"));
   const target = document.getElementById(`panel-${id}`);
@@ -46,16 +91,43 @@ function switchNav(id) {
     activeBtn.classList.add("active-pill");
     activeBtn.classList.remove("text-amber-200/70");
   }
+
+  if (id === "mandala") renderMandala("sriyantra");
 }
 
-// PANCH TATTVA ELEMENTAL SELECTOR
+// PANCH TATTVA DIYA LOGIC (FIXED: Never overwrites layout dimensions)
 let currentTattva = "agni";
-const tattvaColors = {
-  agni: { flame: "from-red-600 via-amber-400 to-yellow-100", glow: "rgba(245, 158, 11, 0.5)", shadow: "#ff9900", prompt: "Agni Consecrated 🔥" },
-  vayu: { flame: "from-cyan-700 via-teal-300 to-white", glow: "rgba(20, 184, 166, 0.5)", shadow: "#06b6d4", prompt: "Vayu Consecrated 💨" },
-  jal: { flame: "from-blue-700 via-sky-300 to-white", glow: "rgba(14, 165, 233, 0.5)", shadow: "#38bdf8", prompt: "Jal Consecrated 🌊" },
-  prithvi: { flame: "from-emerald-700 via-green-400 to-yellow-200", glow: "rgba(16, 185, 129, 0.5)", shadow: "#10b981", prompt: "Prithvi Consecrated 🌿" },
-  akasha: { flame: "from-purple-800 via-fuchsia-400 to-amber-200", glow: "rgba(168, 85, 247, 0.5)", shadow: "#c084fc", prompt: "Akasha Consecrated 🌌" }
+const tattvaStyles = {
+  agni: {
+    bg: "linear-gradient(to top, #dc2626, #fbbf24, #fef08a)",
+    glow: "rgba(245, 158, 11, 0.5)",
+    shadow: "#ff9900",
+    label: "Agni Consecrated 🔥"
+  },
+  vayu: {
+    bg: "linear-gradient(to top, #0e7490, #2dd4bf, #ffffff)",
+    glow: "rgba(20, 184, 166, 0.5)",
+    shadow: "#06b6d4",
+    label: "Vayu Consecrated 💨"
+  },
+  jal: {
+    bg: "linear-gradient(to top, #1d4ed8, #38bdf8, #ffffff)",
+    glow: "rgba(14, 165, 233, 0.5)",
+    shadow: "#38bdf8",
+    label: "Jal Consecrated 🌊"
+  },
+  prithvi: {
+    bg: "linear-gradient(to top, #047857, #4ade80, #fef08a)",
+    glow: "rgba(16, 185, 129, 0.5)",
+    shadow: "#10b981",
+    label: "Prithvi Consecrated 🌿"
+  },
+  akasha: {
+    bg: "linear-gradient(to top, #581c87, #c084fc, #fef08a)",
+    glow: "rgba(168, 85, 247, 0.5)",
+    shadow: "#c084fc",
+    label: "Akasha Consecrated 🌌"
+  }
 };
 
 function setTattva(t) {
@@ -68,14 +140,16 @@ function setTattva(t) {
   const glow = document.getElementById("diyaGlow");
   const prompt = document.getElementById("diyaPrompt");
 
-  flame.className = `relative w-9 h-18 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] bg-gradient-to-t ${tattvaColors[t].flame} flame-lit`;
-  flame.style.filter = `drop-shadow(0 0 25px ${tattvaColors[t].shadow})`;
-  glow.style.backgroundColor = tattvaColors[t].glow;
-  prompt.textContent = tattvaColors[t].prompt;
+  // Keep layout intact, change visual properties
+  flame.style.background = tattvaStyles[t].bg;
+  flame.style.filter = `drop-shadow(0 0 25px ${tattvaStyles[t].shadow})`;
+  flame.classList.add("flame-lit");
+
+  glow.style.backgroundColor = tattvaStyles[t].glow;
+  prompt.textContent = tattvaStyles[t].label;
   triggerConfetti();
 }
 
-// DIYA LIGHTING
 let isLit = false;
 function kindleDiya() {
   const flame = document.getElementById("diyaFlame");
@@ -88,16 +162,14 @@ function kindleDiya() {
     glow.classList.add("glow-lit");
     prompt.textContent = "Akhand Diya Consecrated ✨";
     prompt.classList.replace("text-amber-300", "text-yellow-200");
-    triggerConfetti();
-  } else {
-    triggerConfetti();
   }
+  triggerConfetti();
 }
 
 function triggerConfetti() {
   if (typeof confetti === "function") {
     confetti({
-      particleCount: 75,
+      particleCount: 65,
       spread: 75,
       origin: { y: 0.65 },
       colors: ["#FFD700", "#FF8C00", "#FF4500", "#FFF"]
@@ -105,7 +177,7 @@ function triggerConfetti() {
   }
 }
 
-// SKY LANTERNS
+// Background Lanterns
 const lanternsLayer = document.getElementById("skyLanternsLayer");
 function spawnSkyLantern() {
   const lantern = document.createElement("div");
@@ -119,7 +191,7 @@ function spawnSkyLantern() {
 setInterval(spawnSkyLantern, 2500);
 for (let i = 0; i < 5; i++) spawnSkyLantern();
 
-// AMBIENT FIREWORKS CANVAS
+// Ambient Canvas Particle Physics
 const canvas = document.getElementById("ambientCanvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
@@ -132,7 +204,7 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 window.addEventListener("pointerdown", (e) => {
-  if (e.target.closest("input, button, select, #diyaContainer, #sanadCard, #aartiPlate, #toranString")) return;
+  if (e.target.closest("input, button, select, #diyaContainer, #sanadCard, #aartiPlate, #toranString, #mandalaCanvas")) return;
   spawnBurst(e.clientX, e.clientY);
 });
 
@@ -191,6 +263,48 @@ function renderScene() {
 }
 renderScene();
 
+// POPULATE DAY SELECTOR (1 to 31)
+const daySelect = document.getElementById("birthDaySelect");
+if (daySelect) {
+  for (let d = 1; d <= 31; d++) {
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = `${d} (${d < 10 ? "0" + d : d})`;
+    if (d === 5) opt.selected = true;
+    daySelect.appendChild(opt);
+  }
+}
+
+// BHAGYANK ENGINE
+function calculateBhagyank() {
+  const day = parseInt(document.getElementById("birthDaySelect").value) || 5;
+  const month = parseInt(document.getElementById("birthMonthSelect").value) || 7;
+
+  let sum = day + month;
+  while (sum > 9) {
+    sum = sum.toString().split("").map(Number).reduce((a, b) => a + b, 0);
+  }
+
+  const profiles = {
+    1: { planet: "Surya (Sun) • Leadership & Radiance", desc: "Destined for sovereign creative authority and clear pathfinding breakthroughs." },
+    2: { planet: "Chandra (Moon) • Intuition & Peace", desc: "Blessed with calming emotional depth, musical aesthetic, and artistic harmony." },
+    3: { planet: "Guru (Jupiter) • Expansive Wisdom", desc: "Naturally aligned with scholarly brilliance, intellectual elevation, and mentors' favor." },
+    4: { planet: "Rahu • Disruptive Innovation", desc: "A visionary mindset that deconstructs complex systems to pioneer original solutions." },
+    5: { planet: "Budha (Mercury) • Intellect & Speech", desc: "Quick computational logic, commercial agility, and captivating technical articulation." },
+    6: { planet: "Shukra (Venus) • Abundance & Art", desc: "Draws prosperous blessings of Lakshmi, refined design sense, and joyful celebration." },
+    7: { planet: "Ketu • Deep Analysis & Intuition", desc: "Guided by contemplative philosophy, rigorous mastery, and sudden flashes of clarity." },
+    8: { planet: "Shani (Saturn) • Unyielding Mastery", desc: "Constructs enduring, long-lasting legacies through iron discipline and perseverance." },
+    9: { planet: "Mangala (Mars) • Courage & Triumph", desc: "Dynamic vitality, brave execution, and fierce focus that overcomes every barrier." }
+  };
+
+  const prof = profiles[sum] || profiles[5];
+  document.getElementById("bhagyankDigit").textContent = sum;
+  document.getElementById("bhagyankPlanet").textContent = prof.planet;
+  document.getElementById("bhagyankDesc").textContent = `"${prof.desc}"`;
+  document.getElementById("bhagyankResult").classList.remove("hidden");
+  triggerConfetti();
+}
+
 // NAKSHATRA & RASHI VEDIC DATABASE
 const rashiDB = {
   mesha: {
@@ -198,7 +312,7 @@ const rashiDB = {
     sub: "Lord Mangala • Agni Tattva",
     symbol: "♈",
     shloka: "॥ ॐ धरणीगर्भसंभूतं विद्युत्कान्तिसमप्रभम् । कुमारं शक्तिहस्तं च मंगलं प्रणमाम्यहम् ॥",
-    blessing: "May this Deepavali ignite courageous leadership, clear triumph over obstacles, and unending energy in your academic and creative pursuits."
+    blessing: "May this Deepavali ignite courageous leadership, clear triumph over obstacles, and unending energy in your academic pursuits."
   },
   vrishabha: {
     title: "Vrishabha Rashi (Taurus)",
@@ -212,14 +326,14 @@ const rashiDB = {
     sub: "Lord Budha • Vayu Tattva",
     symbol: "♊",
     shloka: "॥ ॐ प्रियंगुकलिकाश्यामं रूपेणाप्रतिमं बुधम् । सौम्यं सौम्यगुणोपेतं तं बुधं प्रणमाम्यहम् ॥",
-    blessing: "May supreme intellect, persuasive speech, and breakthrough clarity guide all your communications and technical coding endeavors."
+    blessing: "May supreme intellect, persuasive speech, and breakthrough clarity guide all your communications and code."
   },
   karka: {
     title: "Karka Rashi (Cancer)",
     sub: "Lord Chandra • Jal Tattva",
     symbol: "♋",
     shloka: "॥ ॐ दधिशंखतुषाराभं क्षीरोदार्णवसंभवम् । नमामि शशिनं सोमं शम्भोर्मुकुटभूषणम् ॥",
-    blessing: "May deep emotional peace, familial warmth, and boundless empathetic intuition illuminate your days with sweetness."
+    blessing: "May deep emotional peace, familial warmth, and boundless empathetic intuition illuminate your days."
   },
   simha: {
     title: "Simha Rashi (Leo)",
@@ -233,21 +347,21 @@ const rashiDB = {
     sub: "Lord Budha • Prithvi Tattva",
     symbol: "♍",
     shloka: "॥ ॐ सौम्यरूपाय विद्महे वाणेशाय धीमहि तन्नो सौम्यः प्रचोदयात् ॥",
-    blessing: "May precision, vibrant good health, and masterful craftsmanship accompany every milestone you create this year."
+    blessing: "May precision, vibrant health, and masterful engineering craftsmanship accompany every project you build."
   },
   tula: {
     title: "Tula Rashi (Libra)",
     sub: "Lord Shukra • Vayu Tattva",
     symbol: "♎",
     shloka: "॥ ॐ भार्गवाय नमः । सर्वसौभाग्यप्रदायिने नमः ॥",
-    blessing: "May perfect balance, graceful partnerships, and joyous celebration flourish abundantly in your household."
+    blessing: "May perfect balance, graceful collaboration, and joyous celebration flourish abundantly in your life."
   },
   vrishchika: {
     title: "Vrishchika Rashi (Scorpio)",
     sub: "Lord Mangala • Jal Tattva",
     symbol: "♏",
     shloka: "॥ ॐ क्रां क्रीं क्रौं सः भौमाय नमः ॥",
-    blessing: "May transformative resilience, fearless insight, and profound inner power conquer all challenges."
+    blessing: "May transformative resilience, fearless insight, and profound inner power conquer every challenge."
   },
   dhanu: {
     title: "Dhanu Rashi (Sagittarius)",
@@ -268,7 +382,7 @@ const rashiDB = {
     sub: "Lord Shani • Vayu Tattva",
     symbol: "♒",
     shloka: "॥ ॐ शन्नो देवि रभिष्टय आपो भवन्तु पीतये ॥",
-    blessing: "May visionary innovation, humanitarian ideals, and futuristic technical creations shine forth from your mind."
+    blessing: "May visionary innovation, humanitarian ideals, and futuristic creations shine forth from your mind."
   },
   meena: {
     title: "Meena Rashi (Pisces)",
@@ -280,7 +394,6 @@ const rashiDB = {
 };
 
 let activeRashiKey = "mesha";
-
 function selectRashi(key) {
   activeRashiKey = key;
   const data = rashiDB[key];
@@ -291,7 +404,6 @@ function selectRashi(key) {
   document.getElementById("rashiSymbol").textContent = data.symbol;
   document.getElementById("rashiShloka").textContent = data.shloka;
   document.getElementById("rashiBlessing").textContent = `"${data.blessing}"`;
-
   triggerConfetti();
 }
 
@@ -299,39 +411,6 @@ function applyRashiToSanad() {
   const data = rashiDB[activeRashiKey];
   document.getElementById("sanadBlessingText").textContent = `"${data.blessing}"`;
   switchNav("certificate");
-}
-
-// BHAGYANK NUMEROLOGY ENGINE
-function calculateBhagyank() {
-  const dob = document.getElementById("birthDateInput").value;
-  if (!dob) {
-    alert("Please select your birth date.");
-    return;
-  }
-  const digits = dob.replace(/-/g, "").split("").map(Number);
-  let sum = digits.reduce((a, b) => a + b, 0);
-  while (sum > 9) {
-    sum = sum.toString().split("").map(Number).reduce((a, b) => a + b, 0);
-  }
-
-  const profiles = {
-    1: { planet: "Surya (Sun) • Sovereign Leadership", desc: "You are destined for creative authority, unyielding self-confidence, and bold original creation." },
-    2: { planet: "Chandra (Moon) • Harmonious Intuition", desc: "You bring deep peace, emotional insight, and gentle artistic grace into every circle you touch." },
-    3: { planet: "Guru (Jupiter) • Sacred Wisdom", desc: "You possess high expansive intellect, natural teaching capabilities, and spiritual elevation." },
-    4: { planet: "Rahu • Disruptive Innovation", desc: "You break conventional bounds with out-of-the-box technical creativity and pioneering vision." },
-    5: { planet: "Budha (Mercury) • Wit & Quick Computation", desc: "You shine in fast communication, adaptive engineering, and commercial networking." },
-    6: { planet: "Shukra (Venus) • Abundance & Aesthetics", desc: "You attract luxurious harmony, artistic refinement, and joyous celebration into your home." },
-    7: { planet: "Ketu • Spiritual Clarity & Intuition", desc: "Your path is guided by analytical contemplation, philosophical depth, and sudden breakthroughs." },
-    8: { planet: "Shani (Saturn) • Unshakeable Mastery", desc: "You build enduring legacy through patient focus, discipline, and ironclad resilience." },
-    9: { planet: "Mangala (Mars) • Fearless Champion", desc: "You possess dynamic vitality, unyielding courage, and fierce passion to triumph over hurdles." }
-  };
-
-  const prof = profiles[sum] || profiles[1];
-  document.getElementById("bhagyankDigit").textContent = sum;
-  document.getElementById("bhagyankPlanet").textContent = prof.planet;
-  document.getElementById("bhagyankDesc").textContent = `"${prof.desc}"`;
-  document.getElementById("bhagyankResult").classList.remove("hidden");
-  triggerConfetti();
 }
 
 // VIRTUAL AARTI SPINNER
@@ -353,7 +432,7 @@ function spinAarti(e) {
   lastAngle = deg;
 }
 
-// MARIGOLD TORAN WEAVER
+// MARIGOLD TORAN BUILDER
 function addToranBlossom() {
   const container = document.getElementById("toranString");
   const blossoms = [
@@ -369,12 +448,60 @@ function addToranBlossom() {
   triggerConfetti();
 }
 
-// ECO-SANKALPA SIGNER
-let signedPledgeName = "Compassion for Animals";
-let pledgeCount = 2481;
+// SACRED MANDALA RENDERER
+function renderMandala(type) {
+  const mCanvas = document.getElementById("mandalaCanvas");
+  if (!mCanvas) return;
+  const mCtx = mCanvas.getContext("2d");
+  mCanvas.width = mCanvas.parentElement.clientWidth;
+  mCanvas.height = mCanvas.parentElement.clientHeight;
 
+  const cx = mCanvas.width / 2;
+  const cy = mCanvas.height / 2;
+  mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+  mCtx.strokeStyle = "#fbbf24";
+  mCtx.lineWidth = 2;
+  mCtx.shadowBlur = 10;
+  mCtx.shadowColor = "#f59e0b";
+
+  if (type === "sriyantra") {
+    for (let i = 0; i < 9; i++) {
+      mCtx.save();
+      mCtx.translate(cx, cy);
+      mCtx.rotate((Math.PI / 4.5) * i);
+      mCtx.beginPath();
+      mCtx.moveTo(0, -90);
+      mCtx.lineTo(65, 50);
+      mCtx.lineTo(-65, 50);
+      mCtx.closePath();
+      mCtx.stroke();
+      mCtx.restore();
+    }
+  } else {
+    for (let i = 0; i < 8; i++) {
+      mCtx.save();
+      mCtx.translate(cx, cy);
+      mCtx.rotate((Math.PI / 4) * i);
+      mCtx.beginPath();
+      mCtx.moveTo(0, 0);
+      mCtx.quadraticCurveTo(45, -50, 0, -100);
+      mCtx.quadraticCurveTo(-45, -50, 0, 0);
+      mCtx.stroke();
+      mCtx.restore();
+    }
+  }
+}
+
+function clearMandalaCanvas() {
+  const mCanvas = document.getElementById("mandalaCanvas");
+  if (!mCanvas) return;
+  const mCtx = mCanvas.getContext("2d");
+  mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+}
+
+// ECO-SANKALPA SIGNER
+let pledgeCount = 2481;
 function signPledge(pledge, btn) {
-  signedPledgeName = pledge;
   pledgeCount++;
   document.getElementById("pledgeCounter").textContent = pledgeCount.toLocaleString();
   document.getElementById("sanadPledgeTag").textContent = pledge;
@@ -387,20 +514,24 @@ function signPledge(pledge, btn) {
 const sanadNameInput = document.getElementById("sanadNameInput");
 const sanadFamilyInput = document.getElementById("sanadFamilyInput");
 
-sanadNameInput.addEventListener("input", () => {
-  document.getElementById("sanadNameDisplay").textContent = sanadNameInput.value || "Swayam Shoubin Sahoo";
-});
-sanadFamilyInput.addEventListener("input", () => {
-  document.getElementById("sanadFamilyDisplay").textContent = sanadFamilyInput.value || "Cherished Friends & Mentors";
-});
+if (sanadNameInput) {
+  sanadNameInput.addEventListener("input", () => {
+    document.getElementById("sanadNameDisplay").textContent = sanadNameInput.value || "Swayam Shoubin Sahoo";
+  });
+}
+if (sanadFamilyInput) {
+  sanadFamilyInput.addEventListener("input", () => {
+    document.getElementById("sanadFamilyDisplay").textContent = sanadFamilyInput.value || "Cherished Friends & Mentors";
+  });
+}
 
 function downloadSanad() {
   const card = document.getElementById("sanadCard");
   if (typeof html2canvas === "function") {
-    html2canvas(card, { scale: 2, backgroundColor: "#04010a" }).then(canvas => {
+    html2canvas(card, { scale: 2, backgroundColor: "#05020c" }).then(c => {
       const link = document.createElement("a");
       link.download = `Deepavali_Sanad_${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = c.toDataURL("image/png");
       link.click();
     });
   } else {
@@ -409,9 +540,9 @@ function downloadSanad() {
 }
 
 function shareSanadWhatsApp() {
-  const name = sanadNameInput.value;
-  const recipient = sanadFamilyInput.value;
-  const text = encodeURIComponent(`🪔 *Shubh Deepavali from ${name}!* ✨\n\nI consecrated a sacred Diya and generated our official Festive Sanad for ${recipient}.\nCheck it live: ${window.location.href}`);
+  const name = sanadNameInput ? sanadNameInput.value : "Swayam";
+  const recipient = sanadFamilyInput ? sanadFamilyInput.value : "Family";
+  const text = encodeURIComponent(`🪔 *Shubh Deepavali from ${name}!* ✨\n\nI consecrated an Akhand Diya for ${recipient} on DiyaVerse:\n${window.location.href}`);
   window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
 }
 
