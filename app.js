@@ -1,83 +1,92 @@
-// High-Volume Bansuri Flute & Tanpura Synthesis Engine
+// AURA-HARMONIC BANSURI FLUTE & SITAR AUDIO ENGINE
+// Uses 100% pure native Web Audio API with a resonant Low-Pass filter to model an acoustic bamboo flute
 let audioCtx = null;
-let bgmGain = null;
-let isMusicActive = false;
+let masterGainNode = null;
+let fluteFilter = null;
+let isFestiveMusicPlaying = false;
 let musicLoopTimer = null;
 let sparklerMode = false;
 
-function initAudioSystem() {
+function initFestiveAudio() {
   if (!audioCtx) {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     audioCtx = new AudioContextClass();
-    bgmGain = audioCtx.createGain();
-    bgmGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-    bgmGain.connect(audioCtx.destination);
+
+    masterGainNode = audioCtx.createGain();
+    masterGainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
+
+    // Acoustic Low-Pass Filter: strips any harsh buzzing edge
+    fluteFilter = audioCtx.createBiquadFilter();
+    fluteFilter.type = "lowpass";
+    fluteFilter.frequency.setValueAtTime(800, audioCtx.currentTime); // Soft, warm acoustic cutoff
+    fluteFilter.Q.setValueAtTime(3.0, audioCtx.currentTime); // Warm bamboo resonance
+
+    masterGainNode.connect(fluteFilter);
+    fluteFilter.connect(audioCtx.destination);
   }
   if (audioCtx.state === "suspended") {
     audioCtx.resume();
   }
 }
 
-function playFluteNote(freq, delay, duration = 1.8) {
-  if (!isMusicActive || !audioCtx) return;
+function playAcousticFluteTone(freq, delay, duration = 1.6) {
+  if (!isFestiveMusicPlaying || !audioCtx) return;
 
-  const osc1 = audioCtx.createOscillator();
-  const osc2 = audioCtx.createOscillator();
+  const osc = audioCtx.createOscillator();
   const noteGain = audioCtx.createGain();
 
-  // Dual tone generation: Sine body + Triangle resonance
-  osc1.type = "sine";
-  osc2.type = "triangle";
+  // Pure sine wave routed through the warm acoustic filter
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
 
-  osc1.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
-  osc2.frequency.setValueAtTime(freq * 2, audioCtx.currentTime + delay);
-
-  // Maximum audible output
+  // Soft envelope attack and gentle acoustic decay
   noteGain.gain.setValueAtTime(0.001, audioCtx.currentTime + delay);
-  noteGain.gain.exponentialRampToValueAtTime(0.85, audioCtx.currentTime + delay + 0.12);
+  noteGain.gain.exponentialRampToValueAtTime(0.35, audioCtx.currentTime + delay + 0.18);
   noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + delay + duration);
 
-  osc1.connect(noteGain);
-  osc2.connect(noteGain);
-  noteGain.connect(bgmGain);
+  osc.connect(noteGain);
+  noteGain.connect(masterGainNode);
 
-  osc1.start(audioCtx.currentTime + delay);
-  osc2.start(audioCtx.currentTime + delay);
-  osc1.stop(audioCtx.currentTime + delay + duration + 0.1);
-  osc2.stop(audioCtx.currentTime + delay + duration + 0.1);
+  osc.start(audioCtx.currentTime + delay);
+  osc.stop(audioCtx.currentTime + delay + duration + 0.1);
 }
 
-function runFluteRaga() {
-  if (!isMusicActive) return;
-  // Meditative Indian Pentatonic Raag
-  const ragaScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 440.00, 392.00, 329.63];
-  ragaScale.forEach((freq, idx) => {
-    playFluteNote(freq, idx * 0.6, 1.4);
+function runMelodicCycle() {
+  if (!isFestiveMusicPlaying) return;
+
+  // Meditative Indian Raga Bilawal / Yaman notes (Sa, Re, Ga, Pa, Dha, Sa')
+  const ragaPitches = [
+    261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 440.00, 392.00, 329.63
+  ];
+
+  ragaPitches.forEach((pitch, i) => {
+    playAcousticFluteTone(pitch, i * 0.6, 1.4);
   });
-  musicLoopTimer = setTimeout(runFluteRaga, 5600);
+
+  musicLoopTimer = setTimeout(runMelodicCycle, 5800);
 }
 
-function toggleHarmonicBgm() {
-  initAudioSystem();
+function toggleFestiveSoundtrack() {
+  initFestiveAudio();
   const icon = document.getElementById("musicIcon");
   const text = document.getElementById("musicText");
 
-  if (!isMusicActive) {
-    isMusicActive = true;
-    bgmGain.gain.exponentialRampToValueAtTime(0.95, audioCtx.currentTime + 0.4);
-    runFluteRaga();
+  if (!isFestiveMusicPlaying) {
+    isFestiveMusicPlaying = true;
+    masterGainNode.gain.exponentialRampToValueAtTime(0.55, audioCtx.currentTime + 0.5);
+    runMelodicCycle();
     if (icon) icon.className = "fa-solid fa-pause";
     if (text) text.textContent = "Music: Playing 🎵";
   } else {
-    isMusicActive = false;
+    isFestiveMusicPlaying = false;
     clearTimeout(musicLoopTimer);
-    bgmGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+    masterGainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
     if (icon) icon.className = "fa-solid fa-play";
-    if (text) text.textContent = "Bansuri Flute";
+    if (text) text.textContent = "Diwali Flute";
   }
 }
 
-// Sparkler Trail
+// Sparkler Toggle
 function toggleSparklerTrail() {
   sparklerMode = !sparklerMode;
   document.getElementById("sparklerLabel").textContent = sparklerMode ? "Sparklers: ON ✨" : "Sparklers";
@@ -126,7 +135,7 @@ const tattvaStyles = {
   },
   prithvi: {
     bg: "linear-gradient(to top, #047857, #4ade80, #fef08a)",
-    glow: "rgba(168, 85, 247, 0.5)",
+    glow: "rgba(16, 185, 129, 0.5)",
     shadow: "#10b981",
     label: "Prithvi Consecrated 🌿"
   },
@@ -184,7 +193,7 @@ function triggerConfetti() {
   }
 }
 
-// Background Lanterns
+// Background Sky Lanterns
 const lanternsLayer = document.getElementById("skyLanternsLayer");
 function spawnSkyLantern() {
   const lantern = document.createElement("div");
@@ -198,7 +207,7 @@ function spawnSkyLantern() {
 setInterval(spawnSkyLantern, 2500);
 for (let i = 0; i < 5; i++) spawnSkyLantern();
 
-// Ambient Canvas Particle Physics
+// Ambient Canvas Physics
 const canvas = document.getElementById("ambientCanvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
@@ -270,7 +279,7 @@ function renderScene() {
 }
 renderScene();
 
-// Day Selector (1 to 31)
+// Populate Day Select Options (1 to 31)
 const daySelect = document.getElementById("birthDaySelect");
 if (daySelect) {
   daySelect.innerHTML = "";
@@ -440,7 +449,7 @@ function spinAarti(e) {
   lastAngle = deg;
 }
 
-// Marigold Toran
+// Marigold Toran Builder
 function addToranBlossom() {
   const container = document.getElementById("toranString");
   const blossoms = [

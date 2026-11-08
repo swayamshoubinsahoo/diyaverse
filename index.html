@@ -9,21 +9,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="bg-[#05020c] text-amber-50 min-h-screen relative overflow-x-hidden font-['Plus_Jakarta_Sans'] select-none">
 
-  <!-- Particle Atmosphere & Floating Lanterns -->
+  <!-- Interactive Atmosphere Canvas & Sky Lanterns -->
   <canvas id="ambientCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
   <div id="skyLanternsLayer" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
-
-  <!-- Real Diwali Instrumental Audio Player (No Synthesizer Buzz) -->
-  <audio id="festiveBgmAudio" loop preload="auto">
-    <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
-    <source src="https://ia800905.us.archive.org/19/items/FREE_background_music_dhun/Indian%20Flute%20Meditation%20Dhun.mp3" type="audio/mp3">
-  </audio>
 
   <!-- Header Navigation -->
   <header class="sticky top-0 z-50 backdrop-blur-xl bg-[#05020c]/90 border-b border-amber-500/20 px-4 py-3">
@@ -52,11 +46,11 @@
         <button onclick="switchNav('certificate')" id="btn-certificate" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">📜 Sanad</button>
       </nav>
 
-      <!-- Music & Particle Buttons -->
+      <!-- Music & Sparkler Toggles -->
       <div class="flex items-center gap-2">
-        <button id="musicToggleBtn" onclick="toggleDiwaliMusic()" class="px-4 py-2 rounded-full border border-yellow-500/40 bg-yellow-950/50 hover:bg-yellow-800/50 transition text-xs font-semibold text-yellow-300 flex items-center gap-2 shadow-lg">
+        <button id="musicToggleBtn" onclick="toggleFestiveSoundtrack()" class="px-4 py-2 rounded-full border border-yellow-500/40 bg-yellow-950/50 hover:bg-yellow-800/50 transition text-xs font-semibold text-yellow-300 flex items-center gap-2 shadow-lg">
           <i id="musicIcon" class="fa-solid fa-play"></i>
-          <span id="musicText">Diwali Music</span>
+          <span id="musicText">Diwali Flute</span>
         </button>
         <button id="sparklerModeBtn" onclick="toggleSparklerTrail()" class="px-3.5 py-2 rounded-full border border-amber-500/30 bg-amber-950/30 hover:bg-amber-800/40 transition text-xs font-semibold text-amber-300 flex items-center gap-1.5">
           <i class="fa-solid fa-wand-magic-sparkles text-yellow-400"></i>
@@ -80,7 +74,7 @@
     </div>
   </header>
 
-  <!-- 1. SANCTUARY (PANCH TATTVA DIYA) -->
+  <!-- TAB 1: SANCTUARY -->
   <section id="panel-sanctuary" class="page-panel relative z-10 max-w-4xl mx-auto px-4 py-8 flex flex-col items-center text-center">
     <div class="mb-3">
       <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-[11px] uppercase tracking-widest font-semibold mb-3">
@@ -113,11 +107,11 @@
       </button>
     </div>
 
-    <!-- Interactive Clay Diya -->
+    <!-- Consecrated Diya Element -->
     <div class="my-6 relative flex flex-col items-center cursor-pointer group" id="diyaContainer" onclick="kindleDiya()">
       <div id="diyaGlow" class="absolute -top-16 w-56 h-56 rounded-full bg-amber-500/0 blur-[60px] transition-all duration-700 pointer-events-none"></div>
 
-      <!-- Flame Container with Guaranteed Dimensions -->
+      <!-- Flame Container -->
       <div id="diyaFlame" class="relative w-10 h-20 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] bg-gradient-to-t from-red-600 via-amber-400 to-yellow-100 opacity-0 transition-opacity duration-300 filter drop-shadow-[0_0_25px_#ff9900]">
         <div class="absolute inset-1 rounded-full bg-white/70 blur-[1px]"></div>
       </div>
@@ -167,7 +161,7 @@
     </div>
   </section>
 
-  <!-- 2. NAKSHATRA & RASHI -->
+  <!-- TAB 2: NAKSHATRA & RASHI -->
   <section id="panel-jyotish" class="page-panel hidden relative z-10 max-w-3xl mx-auto px-4 py-8 text-center">
     <div class="mb-6">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -177,7 +171,6 @@
       <p class="text-xs text-amber-200/70 mt-1">Select your Zodiac sign to calculate your planetary guardian, consecrated shloka, and auspicious festive element.</p>
     </div>
 
-    <!-- 12 Rashis -->
     <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 mb-6 text-xs">
       <button onclick="selectRashi('mesha')" class="p-3 rounded-xl bg-black/40 border border-amber-500/20 hover:border-yellow-400 transition flex flex-col items-center">
         <span class="text-xl">♈</span>
@@ -252,7 +245,7 @@
     </div>
   </section>
 
-  <!-- 3. BHAGYANK NUMEROLOGY -->
+  <!-- TAB 3: BHAGYANK NUMEROLOGY -->
   <section id="panel-numerology" class="page-panel hidden relative z-10 max-w-xl mx-auto px-4 py-8 text-center">
     <div class="bg-black/50 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -303,7 +296,7 @@
     </div>
   </section>
 
-  <!-- 4. VIRTUAL AARTI THALI -->
+  <!-- TAB 4: VIRTUAL AARTI THALI -->
   <section id="panel-aarti" class="page-panel hidden relative z-10 max-w-xl mx-auto px-4 py-8 text-center">
     <div class="bg-black/50 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -328,7 +321,7 @@
     </div>
   </section>
 
-  <!-- 5. MARIGOLD TORAN BUILDER -->
+  <!-- TAB 5: MARIGOLD TORAN BUILDER -->
   <section id="panel-toran" class="page-panel hidden relative z-10 max-w-3xl mx-auto px-4 py-8 text-center">
     <div class="mb-4">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -351,7 +344,7 @@
     </div>
   </section>
 
-  <!-- 6. SACRED GEOMETRY MANDALA -->
+  <!-- TAB 6: SACRED GEOMETRY MANDALA -->
   <section id="panel-mandala" class="page-panel hidden relative z-10 max-w-3xl mx-auto px-4 py-8 text-center">
     <div class="mb-4">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -378,7 +371,7 @@
     </div>
   </section>
 
-  <!-- 7. MITHAI TRADITION VAULT -->
+  <!-- TAB 7: MITHAI TRADITION VAULT -->
   <section id="panel-mithai" class="page-panel hidden relative z-10 max-w-3xl mx-auto px-4 py-8 text-center">
     <div class="mb-6">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -427,7 +420,7 @@
     </div>
   </section>
 
-  <!-- 8. ECO-SANKALPA PLEDGE -->
+  <!-- TAB 8: ECO-SANKALPA PLEDGE -->
   <section id="panel-sankalpa" class="page-panel hidden relative z-10 max-w-4xl mx-auto px-4 py-8 text-center">
     <div class="mb-6">
       <div class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -484,7 +477,7 @@
     </div>
   </section>
 
-  <!-- 9. GLOBAL HEATMAP RADAR -->
+  <!-- TAB 9: GLOBAL HEATMAP RADAR -->
   <section id="panel-telemetry" class="page-panel hidden relative z-10 max-w-3xl mx-auto px-4 py-8 text-center">
     <div class="bg-black/60 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -545,7 +538,7 @@
     </div>
   </section>
 
-  <!-- 10. ROYAL SANAD (CERTIFICATE & EXPORTER) -->
+  <!-- TAB 10: ROYAL SANAD (CERTIFICATE & EXPORTER) -->
   <section id="panel-certificate" class="page-panel hidden relative z-10 max-w-2xl mx-auto px-4 py-8 text-center">
     <div class="mb-4">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -555,7 +548,6 @@
       <p class="text-xs text-amber-200/70 mt-1">A personalized commemorative certificate featuring your name, consecrated Rashi blessing, and signed Eco-Sankalpa.</p>
     </div>
 
-    <!-- Inputs -->
     <div class="bg-black/50 border border-amber-500/30 rounded-2xl p-4 mb-4 text-left grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
       <div>
         <label class="block text-amber-200 uppercase font-semibold text-[10px] mb-1">Your Name</label>
@@ -611,7 +603,7 @@
     </div>
   </section>
 
-  <!-- Clean Signature Footer (Competitor Text Removed Completely) -->
+  <!-- Clean Signature Footer -->
   <footer class="relative z-10 border-t border-amber-500/20 bg-[#04010a]/90 py-8 px-4 text-center mt-12 font-['Plus_Jakarta_Sans']">
     <div class="max-w-xl mx-auto flex flex-col items-center space-y-2">
       <div class="text-amber-300 font-serif text-sm tracking-wide">
