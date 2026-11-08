@@ -19,6 +19,12 @@
   <canvas id="ambientCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
   <div id="skyLanternsLayer" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
 
+  <!-- Real Diwali Instrumental Audio Player (No Synthesizer Buzz) -->
+  <audio id="festiveBgmAudio" loop preload="auto">
+    <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
+    <source src="https://ia800905.us.archive.org/19/items/FREE_background_music_dhun/Indian%20Flute%20Meditation%20Dhun.mp3" type="audio/mp3">
+  </audio>
+
   <!-- Header Navigation -->
   <header class="sticky top-0 z-50 backdrop-blur-xl bg-[#05020c]/90 border-b border-amber-500/20 px-4 py-3">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -34,25 +40,25 @@
 
       <!-- Module Navigation Pills -->
       <nav class="hidden lg:flex items-center gap-1.5 bg-black/60 border border-amber-500/20 rounded-full p-1 text-xs">
-        <button onclick="switchNav('sanctuary')" id="btn-sanctuary" class="nav-pill active-pill px-3 py-1.5 rounded-full font-semibold transition">🪔 Sanctuary</button>
-        <button onclick="switchNav('jyotish')" id="btn-jyotish" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">✨ Nakshatra</button>
-        <button onclick="switchNav('numerology')" id="btn-numerology" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🔢 Bhagyank</button>
-        <button onclick="switchNav('aarti')" id="btn-aarti" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🔔 Aarti</button>
-        <button onclick="switchNav('toran')" id="btn-toran" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🌼 Toran</button>
-        <button onclick="switchNav('mandala')" id="btn-mandala" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🔯 Mandala</button>
-        <button onclick="switchNav('mithai')" id="btn-mithai" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🍬 Mithai</button>
-        <button onclick="switchNav('sankalpa')" id="btn-sankalpa" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🌱 Sankalpa</button>
-        <button onclick="switchNav('telemetry')" id="btn-telemetry" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🌐 Heatmap</button>
-        <button onclick="switchNav('certificate')" id="btn-certificate" class="nav-pill px-3 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">📜 Sanad</button>
+        <button onclick="switchNav('sanctuary')" id="btn-sanctuary" class="nav-pill active-pill px-3.5 py-1.5 rounded-full font-semibold transition">🪔 Sanctuary</button>
+        <button onclick="switchNav('jyotish')" id="btn-jyotish" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">✨ Nakshatra</button>
+        <button onclick="switchNav('numerology')" id="btn-numerology" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🔢 Bhagyank</button>
+        <button onclick="switchNav('aarti')" id="btn-aarti" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🔔 Aarti</button>
+        <button onclick="switchNav('toran')" id="btn-toran" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🌼 Toran</button>
+        <button onclick="switchNav('mandala')" id="btn-mandala" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🔯 Mandala</button>
+        <button onclick="switchNav('mithai')" id="btn-mithai" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🍬 Mithai</button>
+        <button onclick="switchNav('sankalpa')" id="btn-sankalpa" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🌱 Sankalpa</button>
+        <button onclick="switchNav('telemetry')" id="btn-telemetry" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">🌐 Heatmap</button>
+        <button onclick="switchNav('certificate')" id="btn-certificate" class="nav-pill px-3.5 py-1.5 rounded-full text-amber-200/70 hover:text-amber-200 font-medium transition">📜 Sanad</button>
       </nav>
 
       <!-- Music & Particle Buttons -->
       <div class="flex items-center gap-2">
-        <button id="musicToggleBtn" onclick="toggleHarmonicBgm()" class="px-3.5 py-1.5 rounded-full border border-yellow-500/40 bg-yellow-950/40 hover:bg-yellow-800/40 transition text-xs font-semibold text-yellow-300 flex items-center gap-2 shadow-lg">
+        <button id="musicToggleBtn" onclick="toggleDiwaliMusic()" class="px-4 py-2 rounded-full border border-yellow-500/40 bg-yellow-950/50 hover:bg-yellow-800/50 transition text-xs font-semibold text-yellow-300 flex items-center gap-2 shadow-lg">
           <i id="musicIcon" class="fa-solid fa-play"></i>
-          <span id="musicText">Bansuri Flute</span>
+          <span id="musicText">Diwali Music</span>
         </button>
-        <button id="sparklerModeBtn" onclick="toggleSparklerTrail()" class="px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-950/30 hover:bg-amber-800/40 transition text-xs font-semibold text-amber-300 flex items-center gap-1.5">
+        <button id="sparklerModeBtn" onclick="toggleSparklerTrail()" class="px-3.5 py-2 rounded-full border border-amber-500/30 bg-amber-950/30 hover:bg-amber-800/40 transition text-xs font-semibold text-amber-300 flex items-center gap-1.5">
           <i class="fa-solid fa-wand-magic-sparkles text-yellow-400"></i>
           <span id="sparklerLabel" class="hidden sm:inline">Sparklers</span>
         </button>
@@ -107,11 +113,11 @@
       </button>
     </div>
 
-    <!-- Interactive Clay Diya (Guaranteed Flame Rendering) -->
+    <!-- Interactive Clay Diya -->
     <div class="my-6 relative flex flex-col items-center cursor-pointer group" id="diyaContainer" onclick="kindleDiya()">
       <div id="diyaGlow" class="absolute -top-16 w-56 h-56 rounded-full bg-amber-500/0 blur-[60px] transition-all duration-700 pointer-events-none"></div>
 
-      <!-- Flame Container -->
+      <!-- Flame Container with Guaranteed Dimensions -->
       <div id="diyaFlame" class="relative w-10 h-20 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] bg-gradient-to-t from-red-600 via-amber-400 to-yellow-100 opacity-0 transition-opacity duration-300 filter drop-shadow-[0_0_25px_#ff9900]">
         <div class="absolute inset-1 rounded-full bg-white/70 blur-[1px]"></div>
       </div>
@@ -237,7 +243,7 @@
           ॥ ॐ धरणीगर्भसंभूतं विद्युत्कान्तिसमप्रभम् । कुमारं शक्तिहस्तं च मंगलं प्रणमाम्यहम् ॥
         </div>
         <p class="text-xs text-amber-100/90 leading-relaxed" id="rashiBlessing">
-          "May this Deepavali ignite courageous leadership, clear triumph over obstacles, and unending energy in your academic and creative pursuits."
+          "May this Deepavali ignite courageous leadership, clear triumph over obstacles, and unending energy in your academic pursuits."
         </p>
       </div>
       <button onclick="applyRashiToSanad()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-stone-900 font-bold text-xs uppercase flex items-center gap-1.5">
@@ -246,7 +252,7 @@
     </div>
   </section>
 
-  <!-- 3. BHAGYANK NUMEROLOGY (WITH VERIFIED DAY/MONTH SELECTORS) -->
+  <!-- 3. BHAGYANK NUMEROLOGY -->
   <section id="panel-numerology" class="page-panel hidden relative z-10 max-w-xl mx-auto px-4 py-8 text-center">
     <div class="bg-black/50 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
       <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
@@ -259,7 +265,6 @@
         <div>
           <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">Birth Day</label>
           <select id="birthDaySelect" class="w-full bg-[#120722] border border-amber-500/30 rounded-xl px-3 py-2.5 text-amber-100 focus:outline-none">
-            <!-- Populated dynamically via JS 1-31 -->
           </select>
         </div>
         <div>
