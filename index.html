@@ -1,541 +1,109 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DiyaVerse — Digital Festive Sanctuary & Grand Celebration</title>
+  <title>DiyaVerse — Acoustic-Optic Digital Sanctuary</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="bg-[#06020f] text-amber-50 min-h-screen relative overflow-x-hidden font-['Plus_Jakarta_Sans'] select-none">
+<body class="bg-[#05020a] text-amber-50 min-h-screen relative overflow-hidden font-['Space_Grotesk'] select-none">
 
-  <!-- Interactive Global Background Fireworks Canvas -->
-  <canvas id="fireworksCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
-  <div id="lanternsContainer" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+  <!-- Unified Quantum Canvas: Sparks, Flame Kinetics & Constellations -->
+  <canvas id="stageCanvas" class="fixed inset-0 z-0"></canvas>
 
-  <!-- Grand Festive Navigation Bar -->
-  <header class="sticky top-0 z-50 backdrop-blur-xl bg-[#06020f]/85 border-b border-amber-500/20 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('sanctuary')">
-        <span class="text-2xl animate-bounce">🪔</span>
-        <div>
-          <span class="font-['Cinzel'] font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">DiyaVerse</span>
-          <span class="hidden sm:inline-block text-[9px] uppercase tracking-widest text-amber-400/60 ml-2 font-mono">Festival of Lights</span>
-        </div>
+  <!-- Top Glass HUD -->
+  <header class="relative z-20 flex justify-between items-center px-6 py-4 max-w-6xl mx-auto">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-xl shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+        🪔
       </div>
-
-      <!-- Navigation Tabs -->
-      <nav class="hidden lg:flex items-center gap-1 bg-black/50 border border-amber-500/20 rounded-full p-1 text-xs">
-        <button onclick="switchTab('sanctuary')" id="tab-sanctuary" class="nav-btn active-tab px-3.5 py-1.5 rounded-full transition font-semibold">🪔 Sanctuary</button>
-        <button onclick="switchTab('wall')" id="tab-wall" class="nav-btn px-3.5 py-1.5 rounded-full transition font-medium text-amber-200/70 hover:text-amber-200">✨ Wall of Light</button>
-        <button onclick="switchTab('rangoli')" id="tab-rangoli" class="nav-btn px-3.5 py-1.5 rounded-full transition font-medium text-amber-200/70 hover:text-amber-200">🎨 Rangoli</button>
-        <button onclick="switchTab('greetings')" id="tab-greetings" class="nav-btn px-3.5 py-1.5 rounded-full transition font-medium text-amber-200/70 hover:text-amber-200">💌 Greetings</button>
-        <button onclick="switchTab('photo')" id="tab-photo" class="nav-btn px-3.5 py-1.5 rounded-full transition font-medium text-amber-200/70 hover:text-amber-200">📷 Photo Studio</button>
-        <button onclick="switchTab('lanterns')" id="tab-lanterns" class="nav-btn px-3.5 py-1.5 rounded-full transition font-medium text-amber-200/70 hover:text-amber-200">🏮 Sky Lantern</button>
-        <button onclick="switchTab('mystery')" id="tab-mystery" class="nav-btn px-3.5 py-1.5 rounded-full transition font-medium text-amber-200/70 hover:text-amber-200">🎁 Mystery Gift</button>
-        <button onclick="switchTab('wisdom')" id="tab-wisdom" class="nav-btn px-3.5 py-1.5 rounded-full transition font-medium text-amber-200/70 hover:text-amber-200">🌿 Pet Safety</button>
-      </nav>
-
-      <!-- Quick Audio & Sparkler Controls -->
-      <div class="flex items-center gap-2">
-        <button id="sparklerBtn" class="px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-950/40 hover:bg-amber-800/40 transition text-xs font-semibold text-amber-300 flex items-center gap-1.5">
-          <i class="fa-solid fa-wand-magic-sparkles text-yellow-400"></i>
-          <span id="sparklerText" class="hidden sm:inline">Sparklers: OFF</span>
-        </button>
-        <button onclick="toggleFestiveBgm()" class="px-3 py-1.5 rounded-full border border-yellow-500/40 bg-yellow-950/40 hover:bg-yellow-800/40 transition text-xs font-semibold text-yellow-300 flex items-center gap-1.5">
-          <i class="fa-solid fa-music"></i>
-          <span class="hidden sm:inline">Music</span>
-        </button>
+      <div>
+        <h1 class="font-['Cinzel'] font-black text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
+          DiyaVerse
+        </h1>
+        <p class="text-[10px] text-amber-400/50 uppercase tracking-widest font-mono">Acoustic-Optic Sanctuary</p>
       </div>
     </div>
 
-    <!-- Mobile Scrollable Navigation -->
-    <div class="flex lg:hidden overflow-x-auto gap-2 mt-2 pt-2 border-t border-amber-500/10 text-[11px] no-scrollbar">
-      <button onclick="switchTab('sanctuary')" class="px-3 py-1 whitespace-nowrap text-amber-300 font-bold">Sanctuary</button>
-      <button onclick="switchTab('wall')" class="px-3 py-1 whitespace-nowrap text-amber-200/70">Wall of Light</button>
-      <button onclick="switchTab('rangoli')" class="px-3 py-1 whitespace-nowrap text-amber-200/70">Rangoli</button>
-      <button onclick="switchTab('greetings')" class="px-3 py-1 whitespace-nowrap text-amber-200/70">Greetings</button>
-      <button onclick="switchTab('photo')" class="px-3 py-1 whitespace-nowrap text-amber-200/70">Photo Frame</button>
-      <button onclick="switchTab('lanterns')" class="px-3 py-1 whitespace-nowrap text-amber-200/70">Lanterns</button>
-      <button onclick="switchTab('mystery')" class="px-3 py-1 whitespace-nowrap text-amber-200/70">Mystery Gift</button>
-      <button onclick="switchTab('wisdom')" class="px-3 py-1 whitespace-nowrap text-amber-200/70">Pet Safety</button>
+    <!-- Quick Audio & Physics Controllers -->
+    <div class="flex items-center gap-3">
+      <button id="audioToggleBtn" onclick="toggleAudio()" class="px-4 py-2 rounded-full border border-amber-500/30 bg-amber-950/30 hover:bg-amber-900/40 transition text-xs font-semibold text-amber-300 flex items-center gap-2 backdrop-blur-md">
+        <i id="audioIcon" class="fa-solid fa-volume-xmark"></i>
+        <span id="audioStatus">Sound: Muted</span>
+      </button>
+
+      <button id="clearSparksBtn" onclick="clearCanvasSparks()" class="px-3.5 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition text-xs text-amber-200/60">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
     </div>
   </header>
 
-  <!-- TAB 1: SANCTUARY HERO -->
-  <section id="view-sanctuary" class="view-panel relative z-10 max-w-4xl mx-auto px-4 py-8 flex flex-col items-center text-center">
-    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs tracking-widest uppercase font-semibold mb-4">
-      <i class="fa-solid fa-sparkles text-yellow-400"></i> The Sacred Festival of Lights 2026
+  <!-- Centerstage Experience -->
+  <main class="relative z-10 flex flex-col items-center justify-center min-h-[75vh] px-4 text-center">
+    
+    <!-- Title & Guidance -->
+    <div class="max-w-xl mx-auto pointer-events-none mb-6">
+      <h2 class="font-['Cinzel'] text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-yellow-300 to-amber-500 leading-tight">
+        Akhand Jyoti
+      </h2>
+      <p class="text-amber-200/70 text-xs sm:text-sm mt-2 font-light tracking-wide">
+        Hold the Sacred Diya to channel thermal energy • Click anywhere in the atmosphere to trigger harmonic quantum sparks
+      </p>
     </div>
 
-    <h1 class="font-['Cinzel'] text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-xl tracking-tight leading-tight uppercase">
-      Light Up Someone's World.
-    </h1>
-    <p class="text-amber-200/80 text-xs sm:text-sm md:text-base max-w-xl mx-auto mt-3 leading-relaxed">
-      Immerse yourself in sacred Indian traditions. Light glowing diyas, craft intricate rangolis, create personalized royal greetings, and share timeless blessings with everyone you cherish.
-    </p>
-
-    <!-- Hero Actions -->
-    <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
-      <button onclick="switchTab('greetings')" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-stone-900 font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 transition flex items-center gap-2">
-        <i class="fa-solid fa-feather"></i> Create a Greeting
-      </button>
-      <button onclick="kindleMainDiya()" class="px-5 py-2.5 rounded-full bg-amber-950/60 border border-amber-400/40 text-amber-200 font-bold text-xs uppercase tracking-wider hover:bg-amber-900/60 transition flex items-center gap-2">
-        <i class="fa-solid fa-fire text-orange-400"></i> Light the Diya
-      </button>
-      <button onclick="switchTab('wall')" class="px-5 py-2.5 rounded-full bg-black/50 border border-amber-500/30 text-amber-300 font-semibold text-xs uppercase tracking-wider hover:bg-black/70 transition flex items-center gap-2">
-        <i class="fa-solid fa-users"></i> Explore Celebration
-      </button>
-    </div>
-
-    <!-- Kinetic Diya -->
-    <div class="my-8 relative flex flex-col items-center cursor-pointer group" id="diyaContainer" onclick="kindleMainDiya()">
-      <div id="diyaGlow" class="absolute -top-16 w-52 h-52 rounded-full bg-amber-500/0 blur-3xl transition-all duration-700 pointer-events-none"></div>
+    <!-- Interactive Clay Diya Ignition Core -->
+    <div class="relative flex flex-col items-center cursor-pointer group my-4" id="diyaTouchZone">
       
-      <div id="diyaFlame" class="relative w-9 h-18 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] bg-gradient-to-t from-orange-600 via-amber-400 to-yellow-100 opacity-0 transition-opacity duration-500 filter drop-shadow-[0_0_24px_#ff9900]">
-        <div class="absolute inset-1 rounded-full bg-white/60 blur-xs"></div>
+      <!-- Radial Aura Bloom -->
+      <div id="thermalAura" class="absolute -top-24 w-72 h-72 rounded-full bg-amber-500/0 blur-[60px] transition-all duration-700 pointer-events-none"></div>
+
+      <!-- Consecrated Flame Model -->
+      <div id="flameElement" class="relative w-8 h-16 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] bg-gradient-to-t from-red-600 via-amber-400 to-yellow-100 opacity-0 scale-75 transition-all duration-500 filter drop-shadow-[0_0_25px_#ff9900]">
+        <div class="absolute inset-1 rounded-full bg-white/80 blur-[2px]"></div>
       </div>
 
-      <svg class="w-56 h-24 -mt-3.5 filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" viewBox="0 0 200 100">
-        <path d="M 98 32 Q 100 20 105 18" stroke="#4a1e05" stroke-width="3" fill="none" />
-        <path d="M 20 40 C 25 85, 175 85, 180 40 C 150 48, 50 48, 20 40 Z" fill="url(#clayGradient)" stroke="#d97706" stroke-width="2"/>
-        <ellipse cx="100" cy="40" rx="80" ry="12" fill="#b45309" stroke="#f59e0b" stroke-width="1.5" />
-        <ellipse cx="100" cy="41" rx="65" ry="8" fill="#78350f" />
+      <!-- Procedural Brass Diya Model -->
+      <svg class="w-60 h-24 -mt-3 filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" viewBox="0 0 200 100">
         <defs>
-          <linearGradient id="clayGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#92400e" />
-            <stop offset="50%" stop-color="#b45309" />
-            <stop offset="100%" stop-color="#78350f" />
+          <linearGradient id="brassBase" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f59e0b" />
+            <stop offset="40%" stop-color="#b45309" />
+            <stop offset="100%" stop-color="#451a03" />
           </linearGradient>
         </defs>
+        <path d="M 98 32 Q 100 18 104 16" stroke="#451a03" stroke-width="3" fill="none" />
+        <path d="M 20 40 C 30 90, 170 90, 180 40 C 145 52, 55 52, 20 40 Z" fill="url(#brassBase)" stroke="#fbbf24" stroke-width="1.5"/>
+        <ellipse cx="100" cy="40" rx="80" ry="12" fill="#92400e" stroke="#f59e0b" stroke-width="1.5" />
+        <ellipse cx="100" cy="41" rx="65" ry="7" fill="#581c87" />
       </svg>
 
-      <span id="lightDiyaPrompt" class="mt-4 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 border border-amber-400/40 text-amber-300 shadow-md">
-        Tap to Kindle the Sacred Flame
+      <!-- Thermal Charge Bar -->
+      <div class="w-48 h-1.5 bg-black/60 rounded-full mt-4 overflow-hidden border border-amber-500/30">
+        <div id="chargeFill" class="h-full w-0 bg-gradient-to-r from-orange-500 to-yellow-300 transition-all duration-75"></div>
+      </div>
+      
+      <span id="ignitionLabel" class="mt-2 text-[11px] font-mono uppercase tracking-widest text-amber-300/80">
+        Click or Hold to Kindle Flame
       </span>
     </div>
 
-    <!-- Live Mahurat Countdown -->
-    <div class="w-full max-w-lg bg-black/40 border border-amber-500/30 rounded-2xl p-4 backdrop-blur-md">
-      <p class="text-[11px] uppercase tracking-wider text-amber-300 font-semibold mb-3">
-        <i class="fa-regular fa-clock mr-1"></i> Diwali Mahurat Countdown (Asia/Kolkata IST)
-      </p>
-      <div class="grid grid-cols-4 gap-2 text-center font-mono">
-        <div class="bg-amber-950/40 border border-amber-500/20 rounded-xl p-2">
-          <div id="timer-days" class="text-2xl font-black text-yellow-300">00</div>
-          <div class="text-[9px] uppercase tracking-widest text-amber-300/70">Days</div>
-        </div>
-        <div class="bg-amber-950/40 border border-amber-500/20 rounded-xl p-2">
-          <div id="timer-hours" class="text-2xl font-black text-yellow-300">18</div>
-          <div class="text-[9px] uppercase tracking-widest text-amber-300/70">Hours</div>
-        </div>
-        <div class="bg-amber-950/40 border border-amber-500/20 rounded-xl p-2">
-          <div id="timer-mins" class="text-2xl font-black text-yellow-300">35</div>
-          <div class="text-[9px] uppercase tracking-widest text-amber-300/70">Minutes</div>
-        </div>
-        <div class="bg-amber-950/40 border border-amber-500/20 rounded-xl p-2">
-          <div id="timer-secs" class="text-2xl font-black text-yellow-300">50</div>
-          <div class="text-[9px] uppercase tracking-widest text-amber-300/70">Seconds</div>
-        </div>
-      </div>
+    <!-- Live Harmonic Spectrum Readout -->
+    <div class="flex items-center gap-6 mt-6 px-5 py-2.5 rounded-2xl bg-black/40 border border-amber-500/20 backdrop-blur-md text-[11px] font-mono text-amber-300/70">
+      <div>Fundamental: <span class="text-yellow-400 font-bold">432 Hz</span></div>
+      <div>Entropy: <span id="sparkCountLabel" class="text-yellow-400 font-bold">0 Active</span></div>
+      <div>Sanctuary: <span class="text-emerald-400 font-bold">Conducted</span></div>
     </div>
-  </section>
+  </main>
 
-  <!-- TAB 2: WALL OF LIGHT -->
-  <section id="view-wall" class="view-panel hidden relative z-10 max-w-5xl mx-auto px-4 py-8 text-center">
-    <div class="flex flex-col sm:flex-row items-center justify-between mb-8 pb-4 border-b border-amber-500/20 gap-4">
-      <div class="text-left">
-        <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">
-          Every Lit Diya Joins This Illuminated Constellation
-        </div>
-        <h2 class="font-['Cinzel'] text-2xl sm:text-3xl font-black text-amber-300 uppercase">Sacred Wall of Light</h2>
-        <p class="text-xs text-amber-200/70">Leave a heartfelt dedication and watch your festive illumination grow.</p>
-      </div>
-      <button onclick="openDedicateModal()" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-stone-900 font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 flex items-center gap-2">
-        <i class="fa-solid fa-plus"></i> Light Your Diya on the Wall
-      </button>
-    </div>
-    <div id="wallGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
-  </section>
-
-  <!-- TAB 3: RANGOLI STUDIO -->
-  <section id="view-rangoli" class="view-panel hidden relative z-10 max-w-4xl mx-auto px-4 py-8 text-center">
-    <div class="mb-4">
-      <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">Sacred Kolam & Geometry</div>
-      <h2 class="font-['Cinzel'] text-2xl sm:text-3xl font-black text-amber-300 uppercase">Interactive Rangoli Studio</h2>
-      <p class="text-xs text-amber-200/70 mt-1">Draw with radial symmetry to create intricate festive patterns, or reveal traditional geometric mandalas.</p>
-    </div>
-
-    <!-- Presets & Natural Powders -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-left text-xs">
-      <div class="bg-black/40 border border-amber-500/20 rounded-2xl p-4">
-        <h4 class="font-bold text-amber-300 uppercase text-[11px] mb-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-play text-yellow-400"></i> Reveal Preset Patterns
-        </h4>
-        <div class="space-y-2">
-          <button onclick="drawPresetMandala('lotus')" class="w-full text-left p-2 rounded-xl bg-amber-950/20 hover:bg-amber-900/40 border border-amber-500/20 transition">
-            <span class="font-bold text-amber-200 block">Sacred Lotus Mandala</span>
-            <span class="text-[10px] text-amber-300/60">Traditional 8-fold radial lotus petals</span>
-          </button>
-          <button onclick="drawPresetMandala('star')" class="w-full text-left p-2 rounded-xl bg-amber-950/20 hover:bg-amber-900/40 border border-amber-500/20 transition">
-            <span class="font-bold text-amber-200 block">Star of Prosperity</span>
-            <span class="text-[10px] text-amber-300/60">Auspicious geometric interlocking chakras</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="bg-black/40 border border-amber-500/20 rounded-2xl p-4 md:col-span-2 flex flex-col justify-between">
-        <div>
-          <h4 class="font-bold text-amber-300 uppercase text-[11px] mb-2 flex items-center gap-1.5">
-            <i class="fa-solid fa-palette text-yellow-400"></i> Natural Powder Palette
-          </h4>
-          <div class="flex flex-wrap gap-2">
-            <button onclick="setRangoliColor('#fbbf24')" class="px-3 py-1.5 rounded-full bg-yellow-400 text-stone-900 font-bold text-[11px]">Haldi</button>
-            <button onclick="setRangoliColor('#f97316')" class="px-3 py-1.5 rounded-full bg-orange-500 text-white font-bold text-[11px]">Marigold</button>
-            <button onclick="setRangoliColor('#ef4444')" class="px-3 py-1.5 rounded-full bg-red-600 text-white font-bold text-[11px]">Sindoor</button>
-            <button onclick="setRangoliColor('#10b981')" class="px-3 py-1.5 rounded-full bg-emerald-500 text-white font-bold text-[11px]">Leaf</button>
-            <button onclick="setRangoliColor('#38bdf8')" class="px-3 py-1.5 rounded-full bg-sky-400 text-stone-900 font-bold text-[11px]">Peacock</button>
-            <button onclick="setRangoliColor('#ffffff')" class="px-3 py-1.5 rounded-full bg-white text-stone-900 font-bold text-[11px]">Rice Flour</button>
-          </div>
-        </div>
-        <div class="mt-3 flex justify-end">
-          <button onclick="clearRangoli()" class="px-3 py-1 rounded-full bg-black/60 border border-amber-500/40 text-[11px] text-amber-300 hover:bg-black/80">
-            <i class="fa-solid fa-trash-can mr-1"></i> Clear Canvas
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Rangoli Board -->
-    <div class="relative w-full max-w-xl mx-auto h-80 sm:h-96 rounded-2xl border-2 border-amber-500/40 bg-black/80 backdrop-blur-md overflow-hidden shadow-[0_0_40px_rgba(245,158,11,0.2)]">
-      <canvas id="rangoliCanvas" class="w-full h-full cursor-crosshair"></canvas>
-      <div class="absolute bottom-2 left-2 text-[10px] text-amber-300/60 pointer-events-none">
-        Tap & draw on the circle — your stroke blossoms into a full symmetrical mandala
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 4: GREETINGS STUDIO -->
-  <section id="view-greetings" class="view-panel hidden relative z-10 max-w-4xl mx-auto px-4 py-8 text-center">
-    <div class="mb-4">
-      <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">Festive Studio</div>
-      <h2 class="font-['Cinzel'] text-2xl sm:text-3xl font-black text-amber-300 uppercase">Personalised Greeting Creator</h2>
-      <p class="text-xs text-amber-200/70 mt-1">Choose from handcrafted royal themes, customize your blessings, or let our curated festive copywriter compose words straight from the heart.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left text-xs">
-      <div class="bg-black/50 border border-amber-500/30 rounded-3xl p-5 backdrop-blur-md space-y-3.5">
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">1. Select Card Theme</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="setCardTheme('traditional')" class="theme-opt active-theme p-2 rounded-xl border border-amber-500/40 bg-amber-950/30 text-left">
-              <span class="font-bold text-amber-200 block text-[11px]">Royal Traditional</span>
-              <span class="text-[9px] text-amber-400/60">Mughal Arch & Brass</span>
-            </button>
-            <button onclick="setCardTheme('luxury')" class="theme-opt p-2 rounded-xl border border-amber-500/20 bg-black/40 text-left">
-              <span class="font-bold text-amber-200 block text-[11px]">Golden Luxury</span>
-              <span class="text-[9px] text-amber-400/60">Velvet Foil & Dust</span>
-            </button>
-            <button onclick="setCardTheme('minimal')" class="theme-opt p-2 rounded-xl border border-amber-500/20 bg-black/40 text-left">
-              <span class="font-bold text-amber-200 block text-[11px]">Minimal Elegant</span>
-              <span class="text-[9px] text-amber-400/60">Clean Charcoal Line</span>
-            </button>
-            <button onclick="setCardTheme('spiritual')" class="theme-opt p-2 rounded-xl border border-amber-500/20 bg-black/40 text-left">
-              <span class="font-bold text-amber-200 block text-[11px]">Spiritual Serene</span>
-              <span class="text-[9px] text-amber-400/60">Sacred Shloka & Lotus</span>
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">Recipient Name</label>
-          <input type="text" id="recipientInput" value="Priya & Family" class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-3.5 py-2 text-amber-100 placeholder-amber-500/30" />
-        </div>
-
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">Sender Name</label>
-          <input type="text" id="senderInput" value="Aarav" class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-3.5 py-2 text-amber-100 placeholder-amber-500/30" />
-        </div>
-
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="uppercase tracking-wider text-amber-200/80 font-semibold">Festive Message</label>
-            <button onclick="cycleAiMessage()" class="text-[10px] text-yellow-400 font-bold flex items-center gap-1 hover:underline">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> AI Copywriter
-            </button>
-          </div>
-          <textarea id="messageInput" rows="2" class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-3.5 py-2 text-amber-100 text-xs">May the sacred glow of diyas illuminate your home with good health, unshakeable peace, and golden prosperity this Diwali.</textarea>
-        </div>
-
-        <div class="flex gap-2 pt-1">
-          <button onclick="copyShareGreetingLink()" class="flex-1 py-2.5 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-link"></i> Copy Link
-          </button>
-          <button onclick="shareGreetingWhatsApp()" class="flex-1 py-2.5 rounded-xl bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5">
-            <i class="fa-brands fa-whatsapp"></i> WhatsApp
-          </button>
-        </div>
-      </div>
-
-      <!-- Live Interactive Card Preview -->
-      <div class="flex flex-col items-center justify-center">
-        <span class="text-[10px] uppercase tracking-widest text-amber-300/60 font-mono mb-2">Live Card Preview</span>
-        <div id="greetingPreviewCard" class="w-full max-w-sm rounded-3xl p-6 border-2 border-amber-400/50 bg-gradient-to-b from-[#1a0f2e] to-[#0c051a] shadow-[0_0_35px_rgba(245,158,11,0.25)] text-center relative overflow-hidden flex flex-col items-center justify-between min-h-[320px]">
-          <div class="w-full border-b border-amber-500/20 pb-3">
-            <span class="text-[10px] uppercase tracking-widest text-amber-300/80 font-bold">Auspicious Festivities</span>
-            <h3 class="font-['Cinzel'] text-xl font-black text-amber-300 tracking-wide mt-0.5">SHUBH DEEPAVALI</h3>
-          </div>
-
-          <div class="my-4">
-            <div class="w-12 h-12 rounded-full bg-amber-500/20 border border-yellow-400/50 mx-auto flex items-center justify-center text-2xl shadow-[0_0_20px_#f59e0b]">🪔</div>
-            <h4 id="previewRecipient" class="text-sm font-bold text-yellow-200 mt-2">To Priya & Family</h4>
-            <p id="previewMessage" class="text-xs text-amber-100/90 italic mt-2 leading-relaxed px-2">
-              "May the sacred glow of diyas illuminate your home with good health, unshakeable peace, and golden prosperity this Diwali."
-            </p>
-          </div>
-
-          <div class="w-full border-t border-amber-500/20 pt-2 text-[10px] text-amber-300/70">
-            Warmly from <span id="previewSender" class="font-bold text-yellow-300">Aarav</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 5: PHOTO GREETING STUDIO -->
-  <section id="view-photo" class="view-panel hidden relative z-10 max-w-4xl mx-auto px-4 py-8 text-center">
-    <div class="mb-4">
-      <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">Festive Memories</div>
-      <h2 class="font-['Cinzel'] text-2xl sm:text-3xl font-black text-amber-300 uppercase">Photo Greeting Studio</h2>
-      <p class="text-xs text-amber-200/70 mt-1">Turn your cherished family moments into exquisite framed festive cards. 100% processed directly in your browser with zero cloud storage.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left text-xs">
-      <div class="bg-black/50 border border-amber-500/30 rounded-3xl p-5 backdrop-blur-md space-y-4">
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">1. Upload Your Photo</label>
-          <input type="file" id="photoUpload" accept="image/*" class="w-full text-xs text-amber-200 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30 cursor-pointer" />
-        </div>
-
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">2. Choose Festive Frame</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="setPhotoFrame('gold')" class="p-2 rounded-xl border border-amber-400 bg-amber-950/40 text-[11px] font-bold text-amber-200">Mughal Golden Arch</button>
-            <button onclick="setPhotoFrame('marigold')" class="p-2 rounded-xl border border-amber-500/20 bg-black/40 text-[11px] font-bold text-amber-200">Marigold Garland</button>
-            <button onclick="setPhotoFrame('diya')" class="p-2 rounded-xl border border-amber-500/20 bg-black/40 text-[11px] font-bold text-amber-200">Illuminated Diya Border</button>
-            <button onclick="setPhotoFrame('velvet')" class="p-2 rounded-xl border border-amber-500/20 bg-black/40 text-[11px] font-bold text-amber-200">Royal Velvet Frame</button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">Custom Caption</label>
-          <input type="text" id="photoCaption" value="May our smiles shine as bright as our diyas!" class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-3.5 py-2 text-amber-100" />
-        </div>
-
-        <button onclick="downloadPhotoCard()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-stone-900 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-          <i class="fa-solid fa-download"></i> Download Framed Card
-        </button>
-      </div>
-
-      <div class="flex flex-col items-center justify-center">
-        <div id="photoFrameCard" class="w-full max-w-xs rounded-3xl p-5 border-4 border-amber-400/70 bg-[#120824] shadow-2xl text-center flex flex-col items-center justify-between min-h-[340px]">
-          <div class="text-[9px] uppercase tracking-widest text-amber-300 font-bold">Festive Portrait • Shubh Deepavali</div>
-          
-          <div class="my-3 w-48 h-48 rounded-2xl border-2 border-amber-500/40 bg-black/50 overflow-hidden flex items-center justify-center relative">
-            <img id="userPhotoDisplay" class="w-full h-full object-cover hidden" />
-            <div id="photoPlaceholder" class="text-amber-400/40 text-center p-3">
-              <i class="fa-solid fa-image text-3xl mb-1"></i>
-              <p class="text-[10px]">Your festive photo appears here</p>
-            </div>
-          </div>
-
-          <p id="displayPhotoCaption" class="text-xs text-amber-200 italic">"May our smiles shine as bright as our diyas!"</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 6: SKY LANTERNS STUDIO -->
-  <section id="view-lanterns" class="view-panel hidden relative z-10 max-w-xl mx-auto px-4 py-8 text-center">
-    <div class="bg-black/60 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
-      <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">Digital Akash Kandil</div>
-      <h2 class="font-['Cinzel'] text-2xl font-black text-amber-300 uppercase">Release a Sky Lantern</h2>
-      <p class="text-xs text-amber-200/70 mt-1 mb-5">Write your heartfelt prayer or wish for the world, ignite the paper lantern with warm intentions, and watch it ascend into the celestial night sky.</p>
-
-      <div class="space-y-3.5 text-left text-xs">
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">Your Wish or Blessing for the World</label>
-          <input type="text" id="lanternWish" placeholder="e.g. May every family find peace, shelter, and reason to smile this year..." class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-4 py-2.5 text-amber-100" />
-        </div>
-
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">Your Name (Optional)</label>
-          <input type="text" id="lanternName" placeholder="e.g. Aarav, or leave blank for Anonymous" class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-4 py-2.5 text-amber-100" />
-        </div>
-
-        <div>
-          <label class="block uppercase tracking-wider text-amber-200/80 mb-1 font-semibold">Lantern Paper Glow</label>
-          <div class="flex gap-2">
-            <button onclick="setLanternColor('#ff9800')" class="flex-1 py-1.5 rounded-lg bg-amber-500/30 border border-yellow-400 text-[10px] font-bold text-amber-200">Golden</button>
-            <button onclick="setLanternColor('#f43f5e')" class="flex-1 py-1.5 rounded-lg bg-rose-500/30 border border-rose-400 text-[10px] font-bold text-rose-200">Rose</button>
-            <button onclick="setLanternColor('#10b981')" class="flex-1 py-1.5 rounded-lg bg-emerald-500/30 border border-emerald-400 text-[10px] font-bold text-emerald-200">Emerald</button>
-          </div>
-        </div>
-
-        <button onclick="launchInteractiveLantern()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-stone-900 font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 flex items-center justify-center gap-2 mt-2">
-          <i class="fa-solid fa-paper-plane"></i> Release Sky Lantern
-        </button>
-      </div>
-
-      <div class="mt-6 pt-4 border-t border-amber-500/20 text-left">
-        <span class="text-[10px] uppercase font-mono text-amber-400 font-bold">The Wish Wall (Floating In Real-time)</span>
-        <div id="lanternWishesList" class="space-y-2 mt-2 max-h-36 overflow-y-auto text-[11px] text-amber-100/80 pr-1">
-          <div class="p-2 rounded-lg bg-amber-950/20 border border-amber-500/10">"Wishing that every child finds warmth, education, and boundless laughter this year." — <strong>Kavita R.</strong></div>
-          <div class="p-2 rounded-lg bg-amber-950/20 border border-amber-500/10">"May our streets remain kind to strays and clean for the morning birds. Shubh Deepavali!" — <strong>Rishi & Friends</strong></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 7: MYSTERY DIWALI GIFT BOX -->
-  <section id="view-mystery" class="view-panel hidden relative z-10 max-w-md mx-auto px-4 py-8 text-center">
-    <div class="bg-black/60 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
-      <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">Surprise Token</div>
-      <h2 class="font-['Cinzel'] text-2xl font-black text-amber-300 uppercase">Mystery Diwali Gift Box</h2>
-      <p class="text-xs text-amber-200/70 mt-1 mb-6">Tap the royal festive box to untie the golden ribbon and reveal your secret Diwali blessing.</p>
-
-      <div class="my-6 cursor-pointer group flex flex-col items-center" onclick="openMysteryGift()">
-        <div id="giftBoxIcon" class="w-24 h-24 rounded-2xl bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 p-[2px] shadow-[0_0_30px_rgba(245,158,11,0.4)] group-hover:scale-110 transition duration-300 flex items-center justify-center">
-          <div class="w-full h-full bg-[#15092b] rounded-2xl flex items-center justify-center text-4xl">🎁</div>
-        </div>
-        <span class="mt-3 text-xs font-bold text-yellow-300 uppercase tracking-widest group-hover:underline">Click to Untie Ribbon</span>
-      </div>
-
-      <div id="giftReveal" class="hidden p-4 rounded-2xl bg-amber-950/40 border border-amber-400/50 text-left space-y-2">
-        <span class="text-[10px] uppercase font-mono text-yellow-400 font-bold block">Ancient Vedic Blessing</span>
-        <h4 id="giftTitle" class="font-bold text-amber-200 text-sm">Divine Abundance & Inner Peace</h4>
-        <p id="giftDesc" class="text-xs text-amber-100 italic">"May the divine grace of Goddess Lakshmi bless your home with unshakeable contentment, radiant health, and boundless generosity."</p>
-        <div class="pt-2">
-          <span class="text-[10px] bg-amber-500/20 text-yellow-300 px-2 py-0.5 rounded border border-amber-400/30">Golden Fortune Token: Claim 100% unconditional happiness today!</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 8: PET SAFETY & MINDFUL FESTIVE WISDOM -->
-  <section id="view-wisdom" class="view-panel hidden relative z-10 max-w-3xl mx-auto px-4 py-8 text-center">
-    <div class="mb-6">
-      <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-[10px] uppercase font-bold tracking-widest mb-1">Mindful & Eco-Friendly</div>
-      <h2 class="font-['Cinzel'] text-2xl sm:text-3xl font-black text-amber-300 uppercase">Mindful Festive Wisdom & Pet Safety</h2>
-      <p class="text-xs text-amber-200/70 mt-1">Celebrating the victory of light with compassion for our environment, elders, and four-legged companions.</p>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left text-xs">
-      <div class="bg-black/50 border border-amber-500/20 rounded-2xl p-5 backdrop-blur-md">
-        <div class="flex items-center gap-2 mb-2 text-rose-400 font-bold text-sm">
-          <i class="fa-solid fa-heart"></i> Compassion for Pets & Street Animals
-        </div>
-        <p class="text-amber-100/80 leading-relaxed text-[11px]">
-          Canine and feline hearing is 4x more sensitive than human ears. Loud sudden explosions cause intense acoustic trauma, panic, and heart palpitations in animals. Silent celebrations and gentle indoor music keep our four-legged friends safe and comforted.
-        </p>
-      </div>
-
-      <div class="bg-black/50 border border-amber-500/20 rounded-2xl p-5 backdrop-blur-md">
-        <div class="flex items-center gap-2 mb-2 text-emerald-400 font-bold text-sm">
-          <i class="fa-solid fa-leaf"></i> Mindful & Eco-Friendly Fireworks
-        </div>
-        <p class="text-amber-100/80 leading-relaxed text-[11px]">
-          Traditional firecrackers release heavy particulates and sulphur. Modern festivities embrace low-emission green crackers (CSIR-NEERI certified), digital light projections, and laser celebrations to safeguard our elders and respiratory health.
-        </p>
-      </div>
-
-      <div class="bg-black/50 border border-amber-500/20 rounded-2xl p-5 backdrop-blur-md">
-        <div class="flex items-center gap-2 mb-2 text-yellow-400 font-bold text-sm">
-          <i class="fa-solid fa-dharmachakra"></i> The Sacred Geometry of Rangoli
-        </div>
-        <p class="text-amber-100/80 leading-relaxed text-[11px]">
-          Rangoli patterns are sacred radial geometries traditionally drawn at entryways using rice flour, haldi (turmeric), and flower petals to harmonize vibrational energy, welcome guests, and feed tiny birds and ants in the spirit of universal harmony.
-        </p>
-      </div>
-
-      <div class="bg-black/50 border border-amber-500/20 rounded-2xl p-5 backdrop-blur-md">
-        <div class="flex items-center gap-2 mb-2 text-amber-300 font-bold text-sm">
-          <i class="fa-solid fa-fire"></i> Victory of Inner Light
-        </div>
-        <p class="text-amber-100/80 leading-relaxed text-[11px]">
-          Diwali symbolizes the triumph of spiritual light over darkness, knowledge over ignorance, and righteousness over despair. The lighting of clay lamps (diyas) reminds us to ignite our inner kindness and clarity.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Dedicate Diya Modal -->
-  <div id="dedicateModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-stone-900 border border-amber-500/40 rounded-3xl p-6 shadow-2xl text-left">
-      <h3 class="font-['Cinzel'] text-xl font-bold text-amber-300">Dedicate a Diya</h3>
-      <p class="text-xs text-amber-200/70 mb-4">Add your family prayer to the live Wall of Light.</p>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block text-amber-200 uppercase tracking-wider font-semibold mb-1">Your / Family Name</label>
-          <input type="text" id="dedicateName" placeholder="e.g. Swayam & Family" class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-3 py-2 text-amber-100" />
-        </div>
-        <div>
-          <label class="block text-amber-200 uppercase tracking-wider font-semibold mb-1">Dedication / Prayer</label>
-          <input type="text" id="dedicateMsg" placeholder="e.g. Lighting this Diya for harmony, clean air & prosperity" class="w-full bg-black/60 border border-amber-500/30 rounded-xl px-3 py-2 text-amber-100" />
-        </div>
-        <div class="flex gap-2 pt-2">
-          <button onclick="closeDedicateModal()" class="flex-1 py-2 rounded-xl bg-black/60 border border-amber-500/20 text-xs text-amber-300">Cancel</button>
-          <button onclick="submitDedication()" class="flex-1 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-stone-900 font-bold text-xs uppercase">Light on Wall</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Floating Ambient Festive BGM Player Pill -->
-  <div class="fixed bottom-5 right-5 z-50 flex items-center gap-3 bg-stone-900/90 border border-amber-500/40 backdrop-blur-xl px-4 py-2.5 rounded-full shadow-[0_0_25px_rgba(245,158,11,0.35)] transition-all">
-    <button id="bgmToggleBtn" onclick="toggleFestiveBgm()" class="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-stone-950 flex items-center justify-center font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition">
-      <i id="bgmIcon" class="fa-solid fa-play"></i>
-    </button>
-    <div class="text-left font-mono">
-      <div class="text-[10px] text-yellow-300 font-bold tracking-wider flex items-center gap-1.5">
-        <span id="bgmEqDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-        <span>Festive Tanpura & Sitar Ambience</span>
-      </div>
-      <div id="bgmStatusText" class="text-[9px] text-amber-200/60">Tap to Play (432Hz Attuned)</div>
-    </div>
-  </div>
-
-  <!-- Grand Consecration Footer -->
-  <footer class="relative z-10 border-t border-amber-500/20 bg-[#05020c]/90 py-12 px-4 text-center mt-16 font-['Plus_Jakarta_Sans']">
-    <div class="max-w-2xl mx-auto flex flex-col items-center space-y-4">
-      <div class="text-amber-300 font-serif text-sm sm:text-base tracking-wide leading-relaxed">
-        ॥ ॐ असतो मा सद्गमय । तमसो मा ज्योतिर्गमय । मृत्योर्मा अमृतं गमय ॥
-      </div>
-      <div class="text-[10px] sm:text-[11px] uppercase tracking-widest text-amber-400/70 font-mono">
-        Lead us from the unreal to the real • From darkness unto light • From mortality to immortality
-      </div>
-
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-semibold tracking-wider">
-        <i class="fa-solid fa-sparkles text-yellow-400"></i> Consecrated for Diwali 2026 • Festival of Eternal Lights
-      </div>
-
-      <div class="pt-2 text-xs text-amber-100/90 font-medium">
-        Crafted with Devotion, Sacred Geometry & AI Innovation
-      </div>
-      <div class="text-[11px] text-amber-400/50 font-mono">
-        © 2026 Swayam Shoubin Sahoo • Team DiyaVerse • Deployed via AWS Amplify CDN
-      </div>
-
-      <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="pt-2 text-xs text-yellow-400/80 hover:text-yellow-300 transition flex items-center gap-1.5 font-semibold">
-        <i class="fa-solid fa-arrow-up"></i> Back to Top
-      </button>
-    </div>
+  <!-- Modern Devotional Footer -->
+  <footer class="relative z-20 border-t border-amber-500/10 py-4 px-6 text-center text-xs text-amber-400/40 font-mono flex flex-col sm:flex-row justify-between items-center max-w-6xl mx-auto">
+    <div>॥ तमसो मा ज्योतिर्गमय — From Darkness Unto Light ॥</div>
+    <div class="mt-2 sm:mt-0 text-[11px]">Engineered by Swayam Shoubin Sahoo • Deployed on AWS Amplify CDN</div>
   </footer>
 
   <script src="app.js"></script>
